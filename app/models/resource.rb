@@ -1,5 +1,5 @@
 class Resource < ApplicationRecord
 
-    include HasCards
+    include HasCard
 
 end

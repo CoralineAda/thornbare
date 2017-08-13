@@ -1,5 +1,5 @@
 class Encounter < ApplicationRecord
 
-    include HasCards
+  include ::HasCard
 
 end

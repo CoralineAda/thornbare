@@ -1,5 +1,5 @@
 class Ally < ApplicationRecord
 
-  include HasCards
+  include HasCard
 
 end
