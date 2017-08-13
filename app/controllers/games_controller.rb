@@ -19,6 +19,8 @@ class GamesController < ApplicationController
   def start
     @game.update_attributes(round: 0, turn: 0)
     @current_player = @game.players[0]
+    @spaces = Space.all
+    render :board
   end
 
   def next_turn
@@ -29,12 +31,15 @@ class GamesController < ApplicationController
       @game.update_attributes(turn: @game.turn + 1)
       @current_player = @game.players[@game.turn]
     end
+    @spaces = Space.all
+    render :board
   end
 
   private
 
   def scope_game
-    @game = Game.find(params[:id])
+    id = params[:id] || params[:game_id]
+    @game = Game.find(id)
   end
 
 end

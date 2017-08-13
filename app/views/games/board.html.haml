@@ -1,0 +1,14 @@
+%h1
+  = @game.name
+%h2
+  Round #{@game.round + 1}
+  %br
+  #{@game.players[@game.turn].name}'s Turn
+
+.board
+  - @spaces.each do |space|
+    - x,y = Board.coords(space.position)
+    - space_class = (space.position == 1 || space.position == (Space.count)) ? 'first_or_last' : ''
+    %div{class: "space #{space_class}", style: "top: #{y}px; left: #{x}px"}
+      .label
+        = space.name

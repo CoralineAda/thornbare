@@ -1,3 +1,5 @@
+Space.delete_all
+
 (1..40).to_a.each do |position|
   name = case position
   when 1; "The Bottoms"
@@ -10,7 +12,7 @@
   when 30; "Temple of Pelor"
   when 35; "Guild Hall"
   when 40; "Sewer Entrance"
-  else; "Square #{position}"
+  else; ""
   end
   Space.create(name: name, position: position)
 end

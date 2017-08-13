@@ -26,6 +26,10 @@ class Player < ApplicationRecord
     COLORS[self.color.to_sym]
   end
 
+  def move(squares)
+    update_attribute(:position, self.position + squares)
+  end
+
   private
 
   def set_initial_resources

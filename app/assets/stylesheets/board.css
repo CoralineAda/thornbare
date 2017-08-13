@@ -1,0 +1,23 @@
+.board {
+  position: relative;
+}
+
+.space {
+  height: 75px;
+  width: 75px;
+  background-color: #eee;
+  position: absolute;
+  font-size: 12px;
+  text-align: center;
+  padding: 5px;
+}
+
+.space .label {
+  margin: 25px auto;
+}
+
+.space.first_or_last {
+  background-color: #000;
+  color: #fff;
+  border: 0px;
+}
