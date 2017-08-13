@@ -28,7 +28,7 @@ gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 3.0'
 
-gem 'haml'
+gem 'haml', '5.0.0.beta.2'
 gem "haml-rails", "~> 0.9"
 gem "faker", github: "stympy/faker"
 

@@ -14,4 +14,7 @@ class GamesController < ApplicationController
     @players = @game.players
   end
 
+  def play
+  end
+
 end
