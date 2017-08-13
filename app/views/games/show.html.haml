@@ -1,0 +1,14 @@
+%h1
+  = @game.name
+
+%h2
+  Players
+
+%ul
+  - @players.each do |player|
+    %li
+      %div.player_display{ style: "background-color: #{player.color_value}" }
+        = player.name
+
+
+= button_to "Join Game", new_game_player_path(game_id: @game.id), method: :get

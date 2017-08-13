@@ -1,0 +1,13 @@
+%h1
+  Join
+  = @game.name
+
+= form_for @player, url: {controller: :players, action: :create, game: @game, method: :post} do |form|
+  %fieldset
+    = form.label "Name"
+    = form.text_field :name
+  %fieldset
+    = form.label "Color"
+    = form.select(:color, @game.available_colors)
+
+  = form.submit "Join Game"
