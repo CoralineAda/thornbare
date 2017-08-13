@@ -1,7 +1,16 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+(1..40).to_a.each do |position|
+  name = case position
+  when 1; "The Bottoms"
+  when 5; "Rebel Safehouse"
+  when 10; "Barton's Forge"
+  when 15; "The Stables"
+  when 20; "The Trifle"
+  when 25; "The Broken Pestle"
+  when 25; "Market Square"
+  when 30; "Temple of Pelor"
+  when 35; "Guild Hall"
+  when 40; "Sewer Entrance"
+  else; "Square #{position}"
+  end
+  Space.create(name: name, position: position)
+end

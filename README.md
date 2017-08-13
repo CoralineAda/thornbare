@@ -1,24 +1,13 @@
-# README
+# About Thornbare
+Thornbare is a multi-player, turn-based board game. The goal of the game is to
+amass resources and escort them to the entrance of the black market. Along the
+way players draw cards representing additional resources, allies, and distractions.
+They may also draw Encounter cards, which result in a confrontation with a
+Hand patrol.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a cooperative game. The final score reflects all the players' resources
+that made it successfully to the black market entrance.
 
-Things you may want to cover:
+# Setup
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+To build the board, run `rake db:seed`.

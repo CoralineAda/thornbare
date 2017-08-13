@@ -13,6 +13,9 @@ class Player < ApplicationRecord
   }
 
   belongs_to :game
+  has_many :resources
+  has_many :allies
+  has_many :distractions
 
   validates_presence_of :name
   validates_presence_of :color
@@ -20,4 +23,5 @@ class Player < ApplicationRecord
   def color_value
     COLORS[self.color.to_sym]
   end
+
 end

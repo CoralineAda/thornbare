@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170813182215) do
+ActiveRecord::Schema.define(version: 20170813185234) do
 
   create_table "allies", force: :cascade do |t|
     t.integer "value"
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 20170813182215) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "game_id"
+    t.integer "space", default: 1
   end
 
   create_table "resources", force: :cascade do |t|
@@ -62,6 +63,13 @@ ActiveRecord::Schema.define(version: 20170813182215) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_resources_on_player_id"
+  end
+
+  create_table "spaces", force: :cascade do |t|
+    t.string "name"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
