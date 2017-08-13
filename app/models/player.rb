@@ -13,15 +13,25 @@ class Player < ApplicationRecord
   }
 
   belongs_to :game
-  has_many :resources
-  has_many :allies
-  has_many :distractions
+  has_many :resources, dependent: :destroy
+  has_many :allies, dependent: :destroy
+  has_many :distractions, dependent: :destroy
 
   validates_presence_of :name
   validates_presence_of :color
 
+  after_create :set_initial_resources
+
   def color_value
     COLORS[self.color.to_sym]
+  end
+
+  private
+
+  def set_initial_resources
+    3.times do
+      resources.create(value: rand(4) + 1)
+    end
   end
 
 end

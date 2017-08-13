@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170813185234) do
+ActiveRecord::Schema.define(version: 20170813190137) do
 
   create_table "allies", force: :cascade do |t|
     t.integer "value"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20170813185234) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.integer "round", default: 1
+    t.integer "turn"
   end
 
   create_table "players", force: :cascade do |t|

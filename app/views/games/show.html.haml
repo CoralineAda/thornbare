@@ -12,4 +12,5 @@
 
 
 = button_to "Join Game", new_game_player_path(game_id: @game.id), method: :get
-= button_to "Start Game", game_start_path(game_id: @game.id), method: :get
+- if @game.players.count != 0
+  = button_to "Start Game", game_start_path(game_id: @game.id), method: :get

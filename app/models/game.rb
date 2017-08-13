@@ -11,6 +11,14 @@ class Game < ApplicationRecord
     colors - player_colors
   end
 
+  def roll_dice(quantity)
+    total = 0
+    1..quantity.to_a.each do |die_number|
+      total += rand(5) + 1
+    end
+    total
+  end
+
   def draw_card(player)
     case rand(5)
     when 0..1
