@@ -10,7 +10,6 @@ Space.delete_all
   when 20; "The Broken Pestle"
   when 24; "Temple of Pelor"
   when 28; "Market Square"
-  when 31; "Sewer Entrance"
   else; ""
   end
   Space.create(name: name, position: position)
