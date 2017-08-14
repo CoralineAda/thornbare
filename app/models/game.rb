@@ -7,7 +7,7 @@ class Game < ApplicationRecord
 
   def available_colors
     colors = Player::COLORS.keys.map(&:to_s)
-    player_colors = self.players.map(&:color)
+    player_colors = self.players.map(&:color).map{ |color| color.downcase.split.join('_') }
     colors - player_colors
   end
 
@@ -40,7 +40,7 @@ class Game < ApplicationRecord
   private
 
   def set_name
-    self.name = [Faker::Lovecraft.word.capitalize, Faker::Lovecraft.location, rand(1000)].join(' ')
+    self.name = "#{Faker::Lovecraft.word.capitalize} #{Faker::Lovecraft.location}"
   end
 
 end

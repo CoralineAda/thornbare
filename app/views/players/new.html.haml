@@ -1,5 +1,5 @@
-%h1
-  Join
+%h2
+  Session:
   = @game.name
 
 = form_for @player, url: {controller: :players, action: :create, game: @game, method: :post} do |form|
@@ -8,6 +8,6 @@
     = form.text_field :name
   %fieldset
     = form.label "Color"
-    = form.select(:color, @game.available_colors)
+    = form.select(:color, @game.available_colors.map{ |color| [color.humanize, color] })
 
   = form.submit "Join Game"

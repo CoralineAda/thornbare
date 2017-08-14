@@ -1,5 +1,5 @@
 class Distraction < ApplicationRecord
 
-    include HasCards
+    include HasCard
 
 end

@@ -3,14 +3,36 @@
 body {
   padding: 1em;
   font-family: 'IM Fell English SC', serif;
+  font-size: 20px;
   background-image: url(/assets/background.jpg);
   background-position: left top;
   background-repeat: no-repeat;
 }
 
+a:link, a:visited {
+  color: #990000;
+  text-decoration: none;
+}
+
+input[type='submit'] {
+  background-color: #444;
+  border-radius: 10px;
+  color: #fff;
+  padding: 10px;
+  border: none;
+}
+
+fieldset {
+  border: none;
+}
+
+.title h1 {
+  margin: 0px;
+}
+
 .game_info {
   float: left;
-  width: 300px;
+  width: 250px;
 }
 
 .board {
@@ -61,4 +83,22 @@ body {
   top: 110px;
   left: 400px;
   background-size: cover;
+}
+
+.player-indicator {
+  width: 25px;
+  height: 25px;
+  border-radius: 20px;
+  float: left;
+  text-align: center;
+}
+
+.dice {
+  text-align: center;
+  background-image: url(/assets/dice.png);
+  background-size: 150px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 205px;
+  width: 251px;
 }

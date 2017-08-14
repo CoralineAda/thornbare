@@ -1,9 +1,10 @@
-%h1
-  Existing Games
+- if @games.any?
+  %h2
+    Join an Existing Game
 
-%ul
-  - @games.map do |game|
-    %li
-      = link_to "#{game.name} (#{game.players.count} Players)", game
+  %ul
+    - @games.map do |game|
+      %li
+        = link_to "#{game.name} (#{game.players.count} Players)", game
 
 = button_to "New Game", games_path, method: :post

@@ -1,10 +1,12 @@
 .game_info
-  %h1
-    = @game.name
   %h2
+    = @game.name
+  %h3
     Round #{@game.round + 1}
     %br
-    #{@current_player.name}'s Turn
+    .player-indicator{style: "background-color: #{@current_player.color};"}
+      = @current_player.name[0]
+    #{@current_player.name[1..-1]}'s Turn
     %br
     = @current_space.name
   .dice
@@ -26,6 +28,6 @@
         = space.name
       - @players.each do |player|
         - if player.position == space.position
-          .player{style: "background-color: #{player.color}; top: #{rand(30) * 2}px; left: #{rand(30) * 2}px;"}
+          .player{style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{rand(30) * 2}px; left: #{rand(30) * 2}px;"}
             = player.name[0]
   .building{style: "background-image: url(/assets/buildings/building_#{@current_player.position}.jpg)"}

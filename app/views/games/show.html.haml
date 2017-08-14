@@ -1,15 +1,19 @@
-%h1
+%h2
+  Session:
   = @game.name
 
-%h2
+%h3
   Players
 
-%ul
-  - @players.each do |player|
-    %li
-      %div.player_display{ style: "background-color: #{player.color_value}" }
+- if @players.any?
+  %ul
+    - @players.each do |player|
+      %li
         = player.name
-
+- else
+  %ul
+    %li
+      No players yet!
 
 = button_to "Join Game", new_game_player_path(game_id: @game.id), method: :get
 - if @game.players.count != 0
