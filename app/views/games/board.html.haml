@@ -23,7 +23,8 @@
   - @spaces.each do |space|
     - x,y = Board.coords(space.position)
     - space_class = space.position == 0 ? 'start' : ''
-    %div{class: "space #{space_class}", style: "top: #{y + 10}px; left: #{x + 301}px; background-position: #{rand(10) * 10}px #{rand(10) * 10}px;"}
+    - location_class = space.position % 4 == 0 ? 'special-location' : ''
+    %div{class: "space #{space_class} #{location_class}", style: "top: #{y + 10}px; left: #{x + 301}px; background-position: #{rand(10) * 10}px #{rand(10) * 10}px;"}
       .label
         = space.name
       - @players.each do |player|

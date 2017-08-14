@@ -19,7 +19,7 @@ class GamesController < ApplicationController
   def start
     @game.update_attributes(round: 0, turn: 0)
     @current_player = @players[0]
-    @current_space = Space.find_by(position: 0)
+    @current_space = Space.find_by(position: @current_player.position)
     @spaces = Space.all
     render :board
   end
