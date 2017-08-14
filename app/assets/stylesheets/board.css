@@ -22,6 +22,15 @@ input[type='submit'] {
   border: none;
 }
 
+.btn {
+  background-color: #444;
+  border-radius: 10px;
+  color: #fff;
+  padding: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
 fieldset {
   border: none;
 }
@@ -79,6 +88,7 @@ fieldset {
   text-align: center;
   border-radius: 10px;
   border: 2px solid #444;
+  z-index: 1000;
 }
 
 .building {
@@ -107,4 +117,28 @@ fieldset {
   background-position: center center;
   height: 205px;
   width: 251px;
+}
+
+.dice-result {
+  height: 505px;
+  width: 505px;
+  border: 5px solid #000;
+  position: absolute;
+  top: 90px;
+  left: 380px;
+  text-align: center;
+  background: #eee url(/assets/dice.png) center center no-repeat;
+  font-size: 60px;
+  z-index: 1000;
+}
+
+.fadeIn {
+  opacity: 0.0;
+  transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -webkit-transition: opacity .5s ease-in-out;
+}
+
+.appear {
+  opacity: 1.0;
 }
