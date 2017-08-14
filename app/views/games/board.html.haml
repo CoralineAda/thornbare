@@ -1,6 +1,6 @@
 .game_info
   %h2
-    = @game.name
+    The Black Market
   %h3
     Round #{@game.round + 1}
     %br
@@ -28,6 +28,6 @@
         = space.name
       - @players.each do |player|
         - if player.position == space.position
-          .player{style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{rand(30) * 2}px; left: #{rand(30) * 2}px;"}
+          .player{style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{rand(25) * 2}px; left: #{rand(25) * 2}px;"}
             = player.name[0]
   .building{style: "background-image: url(/assets/buildings/building_#{@current_player.position}.jpg)"}

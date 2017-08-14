@@ -1,6 +1,6 @@
 class Board
 
-  SQUARE_OFFSET = 90
+  SQUARE_OFFSET = 75
 
   def self.coords(position)
     case position
