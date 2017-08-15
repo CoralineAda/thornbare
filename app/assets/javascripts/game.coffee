@@ -4,7 +4,7 @@ $(document).ready ->
     $('#roll-to-move-button').removeClass('disabled')
     $('#roll-to-move-button').click ->
       $.post 'roll_to_move', {}, (data, status) ->
-        doMove(data.result)
+        # doMove(data.result)
         return
       return
 

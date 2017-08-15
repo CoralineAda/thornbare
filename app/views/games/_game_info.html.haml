@@ -9,7 +9,8 @@
   %br
   = current_space.name
 - if game.players[game.turn] == current_player && connected_player == current_player
-  = button_to "Roll to Move", { action: "roll_to_move" }, remote: true, html: { id: "roll-to-move-button", class: "btn" }
+  .btn#roll-to-move-button
+    Roll to Move
 - if game.players[game.turn] == current_player && connected_player == current_player
   .btn#draw-a-card-button
     Draw a Card
@@ -18,3 +19,6 @@
     .btn.trade-button
       Trade cards
     = select_tag(:trade_with, options_from_collection_for_select(players_on_square, "id", "name"))
+
+
+  -# = button_to "Roll to Move", { action: "roll_to_move" }, remote: true, html: { id: "move-button", class: "btn" }
