@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170813190137) do
+ActiveRecord::Schema.define(version: 20170815023703) do
 
   create_table "allies", force: :cascade do |t|
     t.integer "value"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20170813190137) do
     t.integer "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "game_id"
   end
 
   create_table "game_player", force: :cascade do |t|

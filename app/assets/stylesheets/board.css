@@ -29,6 +29,13 @@ input[type='submit'] {
   padding: 5px;
   cursor: pointer;
   text-align: center;
+  margin-bottom: 1em;
+}
+
+.btn.disabled {
+  background-color: #aaa;
+  color: #ddd;
+  cursor: auto;
 }
 
 fieldset {
@@ -51,7 +58,6 @@ fieldset {
 .space {
   height: 60px;
   width: 60px;
-  border-radius: 10px;
   border: 2px solid #444;
   background-image: url(/assets/cobblestones.jpg);
   background-size: 200px;
@@ -72,7 +78,6 @@ fieldset {
 .space.start {
   background: #444;
   color: #fff;
-  border: 0px;
 }
 
 .space.special-location {
@@ -132,6 +137,20 @@ fieldset {
   z-index: 1000;
 }
 
+.drawn-card {
+  height: 505px;
+  width: 505px;
+  position: absolute;
+  top: 90px;
+  left: 380px;
+  text-align: center;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 337px 472px;
+  font-size: 60px;
+  z-index: 1000;
+}
+
 .fadeIn {
   opacity: 0.0;
   transition: opacity .5s ease-in-out;
@@ -141,4 +160,23 @@ fieldset {
 
 .appear {
   opacity: 1.0;
+}
+
+.players {
+  float: right;
+  width: 200px;
+}
+
+.player-li {
+  height: 20px;
+  width: 150px;
+  padding: .5em;
+  margin-bottom: .5em;
+  border-radius: 5px;
+  opacity: 0.5;
+}
+
+.player-li.current {
+  opacity: 1.0;
+  border: 1px solid #444;
 }

@@ -1,5 +1,7 @@
 class Resource < ApplicationRecord
 
-    include HasCard
+  include HasCard
+
+  belongs_to :player
 
 end

@@ -9,15 +9,21 @@
     #{@current_player.name[1..-1]}'s Turn
     %br
     = @current_space.name
-  .btn.dice-button
-    Roll to Move
-  - players_on_square = @players.select{|player| player != @current_player && player.position == @current_player.position}
-  - if players_on_square.any?
-    .btn.trade-button
-      Trade cards
-    = select_tag(:trade_with, options_from_collection_for_select(players_on_square, "id", "name"))
+  - if @players[@game.turn] == @current_player
+    .btn.roll-to-move-button
+      Roll to Move
+  - if @players[@game.turn] == @current_player
+    .btn.draw-a-card-button
+      Draw a Card
+    - players_on_square = @players.select{|player| player != @current_player && player.position == @current_player.position}
+    - if players_on_square.any?
+      .btn.trade-button
+        Trade cards
+      = select_tag(:trade_with, options_from_collection_for_select(players_on_square, "id", "name"))
 
 .dice-result.fadeIn
+
+.drawn-card.fadeIn
 
 .board
   - @spaces.each do |space|
@@ -34,3 +40,11 @@
           = player.name[0]
 
   .building{style: "background-image: url(/assets/buildings/building_#{@current_player.position}.jpg)"}
+
+.players
+  %h3
+    Players
+  - @players.each do |player|
+    - player_class = player == @current_player ? "current" : ""
+    .player-li{class: "#{player_class}", style: "background-color: #{Player::COLORS[player.color.to_sym]}"}
+      = player.name

@@ -1,7 +1,7 @@
 class GamesController < ApplicationController
 
-  before_action :scope_game, only: [:show, :start, :next_turn]
-  before_action :scope_players, only: [:show, :start, :next_turn]
+  before_action :scope_game, except: [:index, :create]
+  before_action :scope_players, except: [:index, :create]
 
   def index
     @games = Game.all
@@ -13,7 +13,6 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id])
   end
 
   def start
@@ -38,6 +37,19 @@ class GamesController < ApplicationController
     render :board
   end
 
+  def roll_to_move
+    render json: { "result": rand(5) + 1 }
+  end
+
+  def draw_card
+    card = @game.draw_card(@current_player)
+    render json: { "card": "#{card.name}_#{card.value}" }
+  end
+
+  def next_turn
+    @game.next_turn
+  end
+
   private
 
   def scope_game
@@ -47,6 +59,7 @@ class GamesController < ApplicationController
 
   def scope_players
     @players = @game.players
+    @current_player = @players[@game.turn]
   end
 
 end
