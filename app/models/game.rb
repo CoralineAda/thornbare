@@ -58,6 +58,7 @@ class Game < ApplicationRecord
     when 4..6; 3
     when 7..8; 4
     when 9; 5
+    end
   end
 
 end

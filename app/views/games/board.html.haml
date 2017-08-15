@@ -1,50 +1,12 @@
 .game_info
-  %h2
-    The Black Market
-  %h3
-    Round #{@game.round + 1}
-    %br
-    .player-indicator{style: "background-color: #{@current_player.color};"}
-      = @current_player.name[0]
-    #{@current_player.name[1..-1]}'s Turn
-    %br
-    = @current_space.name
-  - if @players[@game.turn] == @current_player
-    .btn.roll-to-move-button
-      Roll to Move
-  - if @players[@game.turn] == @current_player
-    .btn.draw-a-card-button
-      Draw a Card
-    - players_on_square = @players.select{|player| player != @current_player && player.position == @current_player.position}
-    - if players_on_square.any?
-      .btn.trade-button
-        Trade cards
-      = select_tag(:trade_with, options_from_collection_for_select(players_on_square, "id", "name"))
+  = render partial: "game_info", locals: { game: @game, current_player: @current_player, current_space: @current_space }
 
 .dice-result.fadeIn
 
 .drawn-card.fadeIn
 
 .board
-  - @spaces.each do |space|
-    - x,y = Board.coords(space.position)
-    - space_class = space.position == 0 ? 'start' : ''
-    - location_class = space.position % 4 == 0 ? 'special-location' : ''
-    %div{id: "space-#{space.position}", class: "space #{space_class} #{location_class}", style: "top: #{y + 10}px; left: #{x + 301}px; background-position: #{rand(10) * 10}px #{rand(10) * 10}px;"}
-      .label
-        = space.name
-    - @players.each do |player|
-      - if player.position == space.position
-        - current_player_id = player == @current_player ? 'current-player' : ''
-        .player{id: "#{current_player_id}", style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{y + 10 + (rand(25) * 2)}px; left: #{x + 301 + (rand(25) * 2)}px;", data: { position: "#{space.position}" } }
-          = player.name[0]
-
-  .building{style: "background-image: url(/assets/buildings/building_#{@current_player.position}.jpg)"}
+  = render partial: "board", locals: { current_player: @current_player, spaces: @spaces, players: @players }
 
 .players
-  %h3
-    Players
-  - @players.each do |player|
-    - player_class = player == @current_player ? "current" : ""
-    .player-li{class: "#{player_class}", style: "background-color: #{Player::COLORS[player.color.to_sym]}"}
-      = player.name
+  = render partial: "players", locals: { players: @players, current_player: @current_player }

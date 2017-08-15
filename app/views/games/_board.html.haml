@@ -1,0 +1,14 @@
+- spaces.each do |space|
+  - x,y = Board.coords(space.position)
+  - space_class = space.position == 0 ? 'start' : ''
+  - location_class = space.position % 4 == 0 ? 'special-location' : ''
+  %div{id: "space-#{space.position}", class: "space #{space_class} #{location_class}", style: "top: #{y + 10}px; left: #{x + 301}px; background-position: #{rand(10) * 10}px #{rand(10) * 10}px;"}
+    .label
+      = space.name
+  - players.each do |player|
+    - if player.position == space.position
+      - current_player_id = player == current_player ? 'current-player' : ''
+      .player{id: "#{current_player_id}", style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{y + 10 + (rand(25) * 2)}px; left: #{x + 301 + (rand(25) * 2)}px;", data: { position: "#{space.position}" } }
+        = player.name[0]
+
+.building{style: "background-image: url(/assets/buildings/building_#{current_player.position}.jpg)"}
