@@ -38,7 +38,7 @@ class Game < ApplicationRecord
   end
 
   def has_started?
-    self.round > 0
+    self.round > 1
   end
 
   def next_turn

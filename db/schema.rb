@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 20170815023703) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.integer "round", default: 1
-    t.integer "turn"
+    t.integer "turn", default: 0
   end
 
   create_table "players", force: :cascade do |t|

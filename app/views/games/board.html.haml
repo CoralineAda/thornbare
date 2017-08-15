@@ -1,12 +1,16 @@
-#game_info
-  = render partial: "game_info", locals: { game: @game, current_player: @current_player, current_space: @current_space }
+#game
 
-#dice-result.fadeIn
+  #game_info
+    = render partial: "game_info", locals: { game: @game, current_player: @current_player, current_space: @current_space, connected_player: @connected_player }
 
-#drawn-card.fadeIn
+  #dice-result.fadeIn
+    = render partial: "dice_result", locals: { result: @result }
 
-#board
-  = render partial: "board", locals: { current_player: @current_player, spaces: @spaces, players: @players }
+  #drawn-card.fadeIn
+    = render partial: "dice_result", locals: { card: @card }
 
-#players
-  = render partial: "players", locals: { players: @players, current_player: @current_player }
+  #board
+    = render partial: "board", locals: { current_player: @current_player, spaces: @spaces, players: @players }
+
+  #players
+    = render partial: "players", locals: { players: @players, current_player: @current_player }

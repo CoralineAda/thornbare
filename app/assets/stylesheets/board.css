@@ -143,12 +143,13 @@ fieldset {
   position: absolute;
   top: 90px;
   left: 380px;
-  text-align: center;
+  z-index: 1000;
+}
+
+#drawn-card-image {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: 337px 472px;
-  font-size: 60px;
-  z-index: 1000;
 }
 
 .fadeIn {
