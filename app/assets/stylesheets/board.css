@@ -46,12 +46,12 @@ fieldset {
   margin: 0px;
 }
 
-.game_info {
+#game_info {
   float: left;
   width: 250px;
 }
 
-.board {
+#board {
   float: left;
 }
 
@@ -96,7 +96,7 @@ fieldset {
   z-index: 1000;
 }
 
-.building {
+#building {
   height: 505px;
   width: 505px;
   border: 5px solid #000;
@@ -114,7 +114,7 @@ fieldset {
   text-align: center;
 }
 
-.dice {
+#dice {
   text-align: center;
   background-image: url(/assets/dice.png);
   background-size: 150px;
@@ -124,7 +124,7 @@ fieldset {
   width: 251px;
 }
 
-.dice-result {
+#dice-result {
   height: 505px;
   width: 505px;
   border: 5px solid #000;
@@ -137,7 +137,7 @@ fieldset {
   z-index: 1000;
 }
 
-.drawn-card {
+#drawn-card {
   height: 505px;
   width: 505px;
   position: absolute;
@@ -162,7 +162,7 @@ fieldset {
   opacity: 1.0;
 }
 
-.players {
+#players {
   float: right;
   width: 200px;
 }

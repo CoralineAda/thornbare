@@ -1,12 +1,12 @@
-.game_info
+#game_info
   = render partial: "game_info", locals: { game: @game, current_player: @current_player, current_space: @current_space }
 
-.dice-result.fadeIn
+#dice-result.fadeIn
 
-.drawn-card.fadeIn
+#drawn-card.fadeIn
 
-.board
+#board
   = render partial: "board", locals: { current_player: @current_player, spaces: @spaces, players: @players }
 
-.players
+#players
   = render partial: "players", locals: { players: @players, current_player: @current_player }
