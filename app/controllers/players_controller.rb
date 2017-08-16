@@ -8,7 +8,7 @@ class PlayersController < ApplicationController
 
   def create
     if player = Player.create(name: player_params[:name], color: player_params[:color], game: @game)
-      session[:player_id] = player.id
+      cookies.signed[:player_id] = player.id
       redirect_to @game
     else
       render :new

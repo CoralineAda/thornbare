@@ -6,7 +6,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
     # Called when the subscription has been terminated by the server
 
   received: (data) ->
-    $(document.body).html(data.game)
+    $('document.body').html(data.game)
     if data.move_result?
       doMove(data.move_result)
 

@@ -2,7 +2,7 @@ class GamesController < ApplicationController
 
   before_action :scope_game, except: [:index, :create, :new]
   before_action :scope_players, except: [:index, :create, :new]
-  before_action :scope_spaces, except: [:index, :create, :new]
+  before_action :scope_spaces, except: [:index, :create, :new, :show]
 
   def index
     @games = Game.all
@@ -18,7 +18,12 @@ class GamesController < ApplicationController
 
   def start
     @game.update_attributes(round: 0, turn: 0)
-    render :board
+    GameChannel.broadcast_to(
+      current_player,
+      body: {
+        game: render_board,
+      }
+    )
   end
 
   def next_turn
@@ -31,7 +36,12 @@ class GamesController < ApplicationController
       @current_player = @players[@game.turn]
       @current_space = Space.find_by(position: @current_player.position)
     end
-    render :board
+    ActionCable.server.broadcast(
+      "game_channel",
+      body: {
+        game: render_game,
+      }
+    )
   end
 
   def roll_to_move
@@ -40,7 +50,7 @@ class GamesController < ApplicationController
     @current_space = Space.find_by(position: @current_player.position)
     ActionCable.server.broadcast(
       "game_channel",
-      content: {
+      {
         game: render_game,
         move_result: result
       }
@@ -66,7 +76,7 @@ class GamesController < ApplicationController
   def scope_players
     @players = @game.players
     @current_player = @players.any? && @players[@game.turn]
-    @connected_player = Player.where(id: session[:player_id]).first
+    @connected_player = current_player || Player.new
   end
 
   def scope_spaces
