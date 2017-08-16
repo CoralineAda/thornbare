@@ -21,7 +21,7 @@ class GamesController < ApplicationController
     GameChannel.broadcast_to(
       current_player,
       body: {
-        game: render_board,
+        game: render_board
       }
     )
   end
@@ -59,7 +59,13 @@ class GamesController < ApplicationController
 
   def draw_card
     card = @game.draw_card(@current_player)
-    render json: { "card": "#{card.name}_#{card.value}" }
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        game: render_game,
+        card: "#{card.name}_#{card.value}"
+      }
+    )
   end
 
   def next_turn

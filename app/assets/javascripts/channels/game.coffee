@@ -9,6 +9,9 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('document.body').html(data.game)
     if data.move_result?
       doMove(data.move_result)
+    if data.card?
+      alert(data.card)
+      showCard(data.card)
 
   enableRollToMove = () ->
     $('#roll-to-move-button').removeClass('disabled')
