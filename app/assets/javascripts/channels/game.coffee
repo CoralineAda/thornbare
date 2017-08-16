@@ -13,18 +13,10 @@ App.game = App.cable.subscriptions.create "GameChannel",
     if data.card?
       showCard(data.card)
 
-  thisPlayerIsCurrentPlayer: () ->
+  enableRollToMove = () ->
     thisPlayer = $('#this-player').data("name")
     currentPlayer = $('#current-player').data("name")
     if thisPlayer == currentPlayer
-      alert(thisPlayer + " is " + currentPlayer)
-      return true
-    else
-      alert(thisPlayer + " is not " + currentPlayer)
-      return false
-
-  enableRollToMove = () ->
-    # if thisPlayerIsCurrentPlayer == true
       $('#roll-to-move-button').removeClass('disabled')
       $('#roll-to-move-button').click ->
         $.post 'roll_to_move', {}, (data, status) ->
@@ -36,7 +28,9 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#roll-to-move-button').addClass('disabled')
 
   enableDrawACard = () ->
-    # if thisPlayerIsCurrentPlayer == true
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
       $('#draw-a-card-button').removeClass('disabled')
       $('#draw-a-card-button').click ->
         $.post 'draw_card', {}, (data, status) ->
@@ -50,10 +44,10 @@ App.game = App.cable.subscriptions.create "GameChannel",
   doMove = (result) ->
     $('#dice-result').addClass('appear')
     $('#dice-result').text("You rolled a " + result)
-    current_position = parseInt($('#current-player').data("position"))
+    current_position = parseInt($('#the-current-player').data("position"))
     new_space = $('#space-' + ((current_position + result) % 32))
     new_position = new_space.offset()
-    $('#current-player').animate {
+    $('#the-current-player').animate {
       left: new_position.left + Math.floor(Math.random() * 50),
       top: new_position.top + Math.floor(Math.random() * 50)
     }, 1000, ->
@@ -73,5 +67,5 @@ App.game = App.cable.subscriptions.create "GameChannel",
       return
     ), 4000
 
-  enableRollToMove()
-  disableDrawACard()
+  # enableRollToMove()
+  # disableDrawACard()

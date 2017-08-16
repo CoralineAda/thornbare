@@ -15,4 +15,4 @@
   #players
     = render partial: "players", locals: { players: @players, current_player: @current_player }
 
-  #this-player{ data: { name: "#{@this_player.name}" } }
+  #this-player{ data: { name: "#{@connected_player.name}"} }

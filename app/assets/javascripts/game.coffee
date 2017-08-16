@@ -1,14 +1,24 @@
 $(document).ready ->
 
   enableRollToMove = () ->
-    $('#roll-to-move-button').removeClass('disabled')
-    $('#roll-to-move-button').click ->
-      $.post 'roll_to_move', {}, (data, status) ->
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
+      $('#roll-to-move-button').removeClass('disabled')
+      $('#roll-to-move-button').click ->
+        $.post 'roll_to_move', {}, (data, status) ->
+          return
         return
-      return
-  disableDrawACard = () ->
-    $('#draw-a-card-button').off('click')
-    $('#draw-a-card-button').addClass('disabled')
+
+  enableDrawACard = () ->
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
+      $('#draw-a-card-button').removeClass('disabled')
+      $('#draw-a-card-button').click ->
+        $.post 'draw_card', {}, (data, status) ->
+          return
+        return
 
   enableRollToMove()
-  disableDrawACard()
+  enableDrawACard()

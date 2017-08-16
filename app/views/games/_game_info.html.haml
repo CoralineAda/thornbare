@@ -8,15 +8,11 @@
   #{current_player.name[1..-1]}'s Turn
   %br
   = current_space.name
-  .btn#roll-to-move-button
+  .btn#roll-to-move-button.disabled
     Roll to Move
-  .btn#draw-a-card-button
+  .btn#draw-a-card-button.disabled
     Draw a Card
   - players_on_square = game.players.select{|player| player != current_player && player.position == current_player.position}
-  - if players_on_square.any? && connected_player == current_player
-    .btn.trade-button
-      Trade cards
-    = select_tag(:trade_with, options_from_collection_for_select(players_on_square, "id", "name"))
-
-
-  -# = button_to "Roll to Move", { action: "roll_to_move" }, remote: true, html: { id: "move-button", class: "btn" }
+  .btn.trade-button
+    Trade cards
+  = select_tag(:trade_with, options_from_collection_for_select(players_on_square, "id", "name"))

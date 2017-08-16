@@ -7,7 +7,7 @@
       = space.name
   - players.each do |player|
     - if player.position == space.position
-      - current_player_id = player == current_player ? 'current-player' : ''
+      - current_player_id = player == current_player ? 'the-current-player' : ''
       .player{id: "#{current_player_id}", style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{y + 10 + (rand(25) * 2)}px; left: #{x + 301 + (rand(25) * 2)}px;", data: { position: "#{space.position}", name: "#{player.id}" } }
         = player.name[0]
 
