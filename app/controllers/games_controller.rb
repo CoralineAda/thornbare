@@ -18,12 +18,8 @@ class GamesController < ApplicationController
 
   def start
     @game.update_attributes(round: 0, turn: 0)
-    GameChannel.broadcast_to(
-      current_player,
-      body: {
-        game: render_board
-      }
-    )
+    @this_player = current_player
+    render_board
   end
 
   def next_turn
@@ -39,6 +35,7 @@ class GamesController < ApplicationController
     ActionCable.server.broadcast(
       "game_channel",
       body: {
+        player: current_player.name,
         game: render_game,
       }
     )
@@ -51,6 +48,7 @@ class GamesController < ApplicationController
     ActionCable.server.broadcast(
       "game_channel",
       {
+        player: current_player.name,
         game: render_game,
         move_result: result
       }
@@ -62,6 +60,7 @@ class GamesController < ApplicationController
     ActionCable.server.broadcast(
       "game_channel",
       {
+        player: current_player.name,
         game: render_game,
         card: "#{card.name}_#{card.value}"
       }

@@ -1,4 +1,5 @@
 App.game = App.cable.subscriptions.create "GameChannel",
+
   connected: ->
     # Called when the subscription is ready for use on the server
 
@@ -10,28 +11,37 @@ App.game = App.cable.subscriptions.create "GameChannel",
     if data.move_result?
       doMove(data.move_result)
     if data.card?
-      alert(data.card)
       showCard(data.card)
 
+  thisPlayerIsCurrentPlayer: () ->
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
+      alert(thisPlayer + " is " + currentPlayer)
+      return true
+    else
+      alert(thisPlayer + " is not " + currentPlayer)
+      return false
+
   enableRollToMove = () ->
-    $('#roll-to-move-button').removeClass('disabled')
-    $('#roll-to-move-button').click ->
-      $.post 'roll_to_move', {}, (data, status) ->
-        # doMove(data.result)
+    # if thisPlayerIsCurrentPlayer == true
+      $('#roll-to-move-button').removeClass('disabled')
+      $('#roll-to-move-button').click ->
+        $.post 'roll_to_move', {}, (data, status) ->
+          return
         return
-      return
 
   disableRollToMove = () ->
     $('#roll-to-move-button').off('click')
     $('#roll-to-move-button').addClass('disabled')
 
   enableDrawACard = () ->
-    $('#draw-a-card-button').removeClass('disabled')
-    $('#draw-a-card-button').click ->
-      $.post 'draw_card', {}, (data, status) ->
-        showCard(data.card)
+    # if thisPlayerIsCurrentPlayer == true
+      $('#draw-a-card-button').removeClass('disabled')
+      $('#draw-a-card-button').click ->
+        $.post 'draw_card', {}, (data, status) ->
+          return
         return
-      return
 
   disableDrawACard = () ->
     $('#draw-a-card-button').off('click')
@@ -41,7 +51,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#dice-result').addClass('appear')
     $('#dice-result').text("You rolled a " + result)
     current_position = parseInt($('#current-player').data("position"))
-    new_space = $('#space-' + (current_position + result))
+    new_space = $('#space-' + ((current_position + result) % 32))
     new_position = new_space.offset()
     $('#current-player').animate {
       left: new_position.left + Math.floor(Math.random() * 50),

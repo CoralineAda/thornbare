@@ -4,3 +4,4 @@
   - player_class = player == @current_player ? "current" : ""
   .player-li{class: "#{player_class}", style: "background-color: #{Player::COLORS[player.color.to_sym]}"}
     = player.name
+  #current-player{ data: { name: "#{@current_player.name}" } }
