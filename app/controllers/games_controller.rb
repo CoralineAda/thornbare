@@ -10,6 +10,7 @@ class GamesController < ApplicationController
 
   def create
     @game = Game.create
+    @game.update_attributes(round: 0, turn: 0)
     redirect_to @game
   end
 
@@ -17,27 +18,8 @@ class GamesController < ApplicationController
   end
 
   def start
-    @game.update_attributes(round: 0, turn: 0)
     @this_player = current_player
-    render_board
-  end
-
-  def next_turn
-    if @game.turn == @game.players.count
-      @game.update_attributes(round: @game.round + 1, turn: 0)
-      @current_player = @players[0]
-      @current_space = Space.find_by(position: @current_player.position)
-    else
-      @game.update_attributes(turn: @game.turn + 1)
-      @current_player = @players[@game.turn]
-      @current_space = Space.find_by(position: @current_player.position)
-    end
-    ActionCable.server.broadcast(
-      "game_channel",
-      body: {
-        game: render_game,
-      }
-    )
+    render :board
   end
 
   def roll_to_move
@@ -66,11 +48,15 @@ class GamesController < ApplicationController
 
   def end_turn
     @game.next_turn
+    if @game.turn == @players.count
+      @game.next_round
+    end
     @current_player = @players.any? && @players[@game.turn]
     ActionCable.server.broadcast(
       "game_channel",
       {
         game: render_game,
+        next_turn: true
       }
     )
   end
@@ -104,10 +90,6 @@ class GamesController < ApplicationController
       result: rand(5) + 1,
       card: "ally_1.png"
     }
-  end
-
-  def render_board
-    render :board
   end
 
 end

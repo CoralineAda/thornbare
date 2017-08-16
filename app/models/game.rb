@@ -41,6 +41,10 @@ class Game < ApplicationRecord
     self.round > 1
   end
 
+  def next_round
+    update_attributes(turn: 0, round: self.round + 1)
+  end
+
   def next_turn
     update_attribute(:turn, self.turn + 1)
   end

@@ -7,7 +7,9 @@ App.game = App.cable.subscriptions.create "GameChannel",
     # Called when the subscription has been terminated by the server
 
   received: (data) ->
-    $('document.body').html(data.game)
+    if data.next_turn?
+      $('#game').html(data.game)
+      enableRollToMove()
     if data.move_result?
       doMove(data.move_result)
     if data.card?
@@ -16,6 +18,8 @@ App.game = App.cable.subscriptions.create "GameChannel",
   enableRollToMove = () ->
     thisPlayer = $('#this-player').data("name")
     currentPlayer = $('#current-player').data("name")
+    alert(thisPlayer)
+    alert(currentPlayer)
     if thisPlayer == currentPlayer
       $('#roll-to-move-button').removeClass('disabled')
       $('#roll-to-move-button').click ->

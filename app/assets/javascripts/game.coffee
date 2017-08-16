@@ -10,15 +10,4 @@ $(document).ready ->
           return
         return
 
-  enableDrawACard = () ->
-    thisPlayer = $('#this-player').data("name")
-    currentPlayer = $('#current-player').data("name")
-    if thisPlayer == currentPlayer
-      $('#draw-a-card-button').removeClass('disabled')
-      $('#draw-a-card-button').click ->
-        $.post 'draw_card', {}, (data, status) ->
-          return
-        return
-
   enableRollToMove()
-  enableDrawACard()
