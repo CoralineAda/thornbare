@@ -41,9 +41,24 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#draw-a-card-button').off('click')
     $('#draw-a-card-button').addClass('disabled')
 
+  enableEndTurn = () ->
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
+      $('#end-turn-button').removeClass('disabled')
+      $('#end-turn-button').click ->
+        $.post 'end_turn', {}, (data, status) ->
+          return
+        return
+
   doMove = (result) ->
     $('#dice-result').addClass('appear')
-    $('#dice-result').text("You rolled a " + result)
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
+      $('#dice-result').text("You rolled a " + result)
+    else
+      $('#dice-result').text(currentPlayer + " rolled a " + result)
     current_position = parseInt($('#the-current-player').data("position"))
     new_space = $('#space-' + ((current_position + result) % 32))
     new_position = new_space.offset()
@@ -62,10 +77,8 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#drawn-card').addClass('appear')
     $('#drawn-card').css("background-image", "url(/assets/cards/" + card + ".png)")
     disableDrawACard()
+    enableEndTurn()
     setTimeout (->
       $('#drawn-card').removeClass 'appear'
       return
     ), 4000
-
-  # enableRollToMove()
-  # disableDrawACard()

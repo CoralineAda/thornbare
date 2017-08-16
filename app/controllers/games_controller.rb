@@ -64,8 +64,15 @@ class GamesController < ApplicationController
     )
   end
 
-  def next_turn
+  def end_turn
     @game.next_turn
+    @current_player = @players.any? && @players[@game.turn]
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        game: render_game,
+      }
+    )
   end
 
   private
