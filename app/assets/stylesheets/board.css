@@ -144,6 +144,9 @@ fieldset {
   top: 90px;
   left: 380px;
   z-index: 1000;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 337px 472px;
 }
 
 #drawn-card-image {

@@ -10,6 +10,30 @@ App.game = App.cable.subscriptions.create "GameChannel",
     if data.move_result?
       doMove(data.move_result)
 
+  enableRollToMove = () ->
+    $('#roll-to-move-button').removeClass('disabled')
+    $('#roll-to-move-button').click ->
+      $.post 'roll_to_move', {}, (data, status) ->
+        # doMove(data.result)
+        return
+      return
+
+  disableRollToMove = () ->
+    $('#roll-to-move-button').off('click')
+    $('#roll-to-move-button').addClass('disabled')
+
+  enableDrawACard = () ->
+    $('#draw-a-card-button').removeClass('disabled')
+    $('#draw-a-card-button').click ->
+      $.post 'draw_card', {}, (data, status) ->
+        showCard(data.card)
+        return
+      return
+
+  disableDrawACard = () ->
+    $('#draw-a-card-button').off('click')
+    $('#draw-a-card-button').addClass('disabled')
+
   doMove = (result) ->
     $('#dice-result').addClass('appear')
     $('#dice-result').text("You rolled a " + result)
@@ -26,3 +50,15 @@ App.game = App.cable.subscriptions.create "GameChannel",
       disableRollToMove()
       enableDrawACard()
       return
+
+  showCard = (card) ->
+    $('#drawn-card').addClass('appear')
+    $('#drawn-card').css("background-image", "url(/assets/cards/" + card + ".png)")
+    disableDrawACard()
+    setTimeout (->
+      $('#drawn-card').removeClass 'appear'
+      return
+    ), 4000
+
+  enableRollToMove()
+  disableDrawACard()
