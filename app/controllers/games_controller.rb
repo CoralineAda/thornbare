@@ -24,7 +24,7 @@ class GamesController < ApplicationController
 
   def roll_to_move
     result = rand(5) + 1
-    @current_player.update_attribute(:position, (@current_player.position + result) % 32)
+    @current_player.update_attributes!(position: (@current_player.position + result) % 32)
     @current_space = Space.find_by(position: @current_player.position)
     ActionCable.server.broadcast(
       "game_channel",
@@ -36,14 +36,16 @@ class GamesController < ApplicationController
   end
 
   def draw_card
-    card = @game.draw_card(@current_player)
-    ActionCable.server.broadcast(
-      "game_channel",
-      {
-        game: render_game,
-        card: "#{card.name}_#{card.value}"
-      }
-    )
+    if @current_player.position % 4 == 0
+      card = @game.draw_card(@current_player)
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          game: render_game,
+          card: "#{card.name}_#{card.value}"
+        }
+      )
+    end
   end
 
   def end_turn

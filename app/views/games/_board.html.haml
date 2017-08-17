@@ -8,7 +8,7 @@
   - players.each do |player|
     - if player.position == space.position
       - current_player_id = player == current_player ? 'the-current-player' : ''
-      .player{id: "#{current_player_id}", style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{y + 10 + (rand(25) * 2)}px; left: #{x + 301 + (rand(25) * 2)}px;", data: { position: "#{space.position}", name: "#{player.id}" } }
+      .player{id: "#{current_player_id}", style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{y + 10 + (rand(25) * 2)}px; left: #{x + 301 + (rand(25) * 2)}px;", data: { position: "#{space.position}", name: "#{player.name}" } }
         = player.name[0]
 
 #building{style: "background-image: url(/assets/buildings/building_#{current_player.position}.jpg)"}

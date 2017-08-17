@@ -18,8 +18,6 @@ App.game = App.cable.subscriptions.create "GameChannel",
   enableRollToMove = () ->
     thisPlayer = $('#this-player').data("name")
     currentPlayer = $('#current-player').data("name")
-    alert(thisPlayer)
-    alert(currentPlayer)
     if thisPlayer == currentPlayer
       $('#roll-to-move-button').removeClass('disabled')
       $('#roll-to-move-button').click ->
@@ -31,15 +29,21 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#roll-to-move-button').off('click')
     $('#roll-to-move-button').addClass('disabled')
 
+  currentPosition = () ->
+    parseInt($('#the-current-player').data("position"))
+
   enableDrawACard = () ->
-    thisPlayer = $('#this-player').data("name")
-    currentPlayer = $('#current-player').data("name")
-    if thisPlayer == currentPlayer
-      $('#draw-a-card-button').removeClass('disabled')
-      $('#draw-a-card-button').click ->
-        $.post 'draw_card', {}, (data, status) ->
+    if currentPosition() % 4 == 0
+      thisPlayer = $('#this-player').data("name")
+      currentPlayer = $('#current-player').data("name")
+      if thisPlayer == currentPlayer
+        $('#draw-a-card-button').removeClass('disabled')
+        $('#draw-a-card-button').click ->
+          $.post 'draw_card', {}, (data, status) ->
+            return
           return
-        return
+    else
+      enableEndTurn()
 
   disableDrawACard = () ->
     $('#draw-a-card-button').off('click')
@@ -63,15 +67,14 @@ App.game = App.cable.subscriptions.create "GameChannel",
       $('#dice-result').text("You rolled a " + result)
     else
       $('#dice-result').text(currentPlayer + " rolled a " + result)
-    current_position = parseInt($('#the-current-player').data("position"))
-    new_space = $('#space-' + ((current_position + result) % 32))
+    new_space = $('#space-' + ((currentPosition() + result) % 32))
     new_position = new_space.offset()
     $('#the-current-player').animate {
       left: new_position.left + Math.floor(Math.random() * 50),
       top: new_position.top + Math.floor(Math.random() * 50)
     }, 1000, ->
       $('#dice-result').removeClass('appear')
-      $('#building').css("background-image", "url(/assets/buildings/building_" + (current_position + result) + ".jpg)")
+      $('#building').css("background-image", "url(/assets/buildings/building_" + (currentPosition() + result) + ".jpg)")
       $('#card-button').removeClass('disabled')
       disableRollToMove()
       enableDrawACard()
