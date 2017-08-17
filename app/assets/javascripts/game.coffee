@@ -10,4 +10,15 @@ $(document).ready ->
           return
         return
 
+  enableShowCards = () ->
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
+      $('#show-cards-button').removeClass('disabled')
+      $('#show-cards-button').click ->
+        $.post 'show_cards', {}, (data, status) ->
+          return
+        return
+
   enableRollToMove()
+  enableShowCards()

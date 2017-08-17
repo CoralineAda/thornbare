@@ -11,6 +11,8 @@
   .btn#draw-a-card-button.disabled
     Draw a Card
   - players_on_square = game.players.select{|player| player != current_player && player.position == current_player.position}
+  .btn#show-cards-button.disabled
+    Your Cards
   .btn.trade-button.disabled
     Trade cards
   -# = select_tag(:trade_with, options_from_collection_for_select(players_on_square, "id", "name"))

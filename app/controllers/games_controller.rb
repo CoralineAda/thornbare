@@ -24,13 +24,25 @@ class GamesController < ApplicationController
 
   def roll_to_move
     result = rand(5) + 1
+    original_position = @current_player.position
     @current_player.update_attributes!(position: (@current_player.position + result) % 32)
     @current_space = Space.find_by(position: @current_player.position)
     ActionCable.server.broadcast(
       "game_channel",
       {
-        game: render_game,
+        players: render_players,
+        from_position: original_position,
+        to_position: @current_player.position,
         move_result: result
+      }
+    )
+  end
+
+  def show_cards
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        cards: render_cards
       }
     )
   end
@@ -79,6 +91,17 @@ class GamesController < ApplicationController
   def scope_spaces
     @spaces = Space.all
     @current_space = Space.find_by(position: @current_player.position)
+  end
+
+  def render_players
+    render partial: "players", locals: {
+      players: @players,
+      current_player: @current_player
+    }
+  end
+
+  def render_cards
+    render partial: "cards", locals: { current_player: @current_player }
   end
 
   def render_game

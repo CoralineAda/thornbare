@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     post :roll_to_move, to: :roll_to_move
     post :end_turn, to: :end_turn
     post :draw_card, to: :draw_card
+    post :show_cards, to: :show_cards
     resources :players
   end
 

@@ -15,4 +15,7 @@
   #players
     = render partial: "players", locals: { players: @players, current_player: @current_player }
 
+  #cards.fadeIn
+    = render partial: "cards", locals: { current_player: @current_player }
+
 #this-player{ data: { name: "#{@connected_player.name}"} }

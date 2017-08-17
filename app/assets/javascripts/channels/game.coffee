@@ -10,10 +10,19 @@ App.game = App.cable.subscriptions.create "GameChannel",
     if data.next_turn?
       $('#game').html(data.game)
       enableRollToMove()
+      disableShowCards()
+      enableShowCards()
     if data.move_result?
-      doMove(data.move_result)
+      $('#players').html(data.players)
+      doMove(data.from_position, data.to_position, data.move_result)
     if data.card?
       showCard(data.card)
+    if data.cards?
+      $('#cards').html(data.cards)
+      showCards() # THIS IS FAILING INTERMITTENTLY
+
+  currentPosition = () ->
+    parseInt($('#the-current-player').data("position"))
 
   enableRollToMove = () ->
     thisPlayer = $('#this-player').data("name")
@@ -29,8 +38,30 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#roll-to-move-button').off('click')
     $('#roll-to-move-button').addClass('disabled')
 
-  currentPosition = () ->
-    parseInt($('#the-current-player').data("position"))
+  enableShowCards = () ->
+    thisPlayer = $('#this-player').data("name")
+    currentPlayer = $('#current-player').data("name")
+    if thisPlayer == currentPlayer
+      $('#show-cards-button').removeClass('disabled')
+      $('#show-cards-button').click ->
+        $.post 'show_cards', {}, (data, status) ->
+          return
+        return
+
+  showCards = () ->
+    $('#cards').addClass('appear')
+    setTimeout (->
+      $('#cards').removeClass 'appear'
+      return
+    ), 5000
+
+  disableShowCards = () ->
+    $('#show-cards-button').off('click')
+    $('#show-cards-button').addClass('disabled')
+
+  disableRollToMove = () ->
+    $('#roll-to-move-button').off('click')
+    $('#roll-to-move-button').addClass('disabled')
 
   enableDrawACard = () ->
     if currentPosition() % 4 == 0
@@ -59,7 +90,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
           return
         return
 
-  doMove = (result) ->
+  doMove = (from_position, to_position, result) ->
     $('#dice-result').addClass('appear')
     thisPlayer = $('#this-player').data("name")
     currentPlayer = $('#current-player').data("name")
@@ -67,14 +98,14 @@ App.game = App.cable.subscriptions.create "GameChannel",
       $('#dice-result').text("You rolled a " + result)
     else
       $('#dice-result').text(currentPlayer + " rolled a " + result)
-    new_space = $('#space-' + ((currentPosition() + result) % 32))
+    new_space = $('#space-' + to_position)
     new_position = new_space.offset()
-    $('#the-current-player').animate {
+    $('#current-player-token').animate {
       left: new_position.left + Math.floor(Math.random() * 50),
       top: new_position.top + Math.floor(Math.random() * 50)
     }, 1000, ->
       $('#dice-result').removeClass('appear')
-      $('#building').css("background-image", "url(/assets/buildings/building_" + (currentPosition() + result) + ".jpg)")
+      $('#building').css("background-image", "url(/assets/buildings/building_" + to_position + ".jpg)")
       $('#card-button').removeClass('disabled')
       disableRollToMove()
       enableDrawACard()
