@@ -190,15 +190,14 @@ App.game = App.cable.subscriptions.create "GameChannel",
         success = false
         $('#outcome').html("You fought bravely but were overcome... You have lost " + difficulty + " resources.")
 
-  $('#outcome-confirm-button').click ->
-    alert('ok')
-    # $.post 'end_encounter', {
-    #     success: success
-    #     card_spent: { name: cardInPlay, value: cardInPlayValue },
-    #     resources_lost: resourcesLostValue
-    #   }, (data, status) ->
-    #   return
-    # return
+    $('#outcome-confirm-button').click ->
+      $.post 'end_encounter', {
+          success: success
+          card_spent: { name: cardInPlay, value: cardInPlayValue },
+          resources_lost: resourcesLostValue
+        }, (data, status) ->
+        return
+      return
 
   rollDice = (quantity) ->
     result = 0

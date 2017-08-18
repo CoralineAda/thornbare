@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     post :end_turn, to: :end_turn
     post :draw_card, to: :draw_card
     post :show_cards, to: :show_cards
+    post :end_encounter, to: :end_encounter
     resources :players
   end
 

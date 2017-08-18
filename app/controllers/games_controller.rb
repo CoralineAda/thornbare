@@ -100,11 +100,16 @@ class GamesController < ApplicationController
     if params[:card_spent][:name] == "distraction"
       current_player.distractions.where(value: params[:card_spent][:value]).first.destroy
     end
+    @game.next_turn
+    if @game.turn == @players.count
+      @game.next_round
+    end
+    @current_player = @players[@game.turn]
     ActionCable.server.broadcast(
       "game_channel",
       {
         game: render_game,
-        end_encounter: true
+        next_turn: true
       }
     )
   end
