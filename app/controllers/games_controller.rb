@@ -19,23 +19,35 @@ class GamesController < ApplicationController
 
   def start
     @this_player = current_player
+    @card = Card.new(name: "encounter", value: 3)
     render :board
   end
 
   def roll_to_move
-    result = rand(5) + 1
-    original_position = @current_player.position
-    @current_player.update_attributes!(position: (@current_player.position + result) % 32)
-    @current_space = Space.find_by(position: @current_player.position)
+    @card = Card.new(name: "encounter", value: 3)
     ActionCable.server.broadcast(
       "game_channel",
       {
-        players: render_players,
-        from_position: original_position,
-        to_position: @current_player.position,
-        move_result: result
+        game: render_game,
+        card: "#{@card.name}_#{@card.value}",
+        value: @card.value,
+        resources: current_player.resources.map(&:value).sort,
+        encounter: true
       }
     )
+    # result = rand(5) + 1
+    # original_position = @current_player.position
+    # @current_player.update_attributes!(position: (@current_player.position + result) % 32)
+    # @current_space = Space.find_by(position: @current_player.position)
+    # ActionCable.server.broadcast(
+    #   "game_channel",
+    #   {
+    #     players: render_players,
+    #     from_position: original_position,
+    #     to_position: @current_player.position,
+    #     move_result: result
+    #   }
+    # )
   end
 
   def show_cards
@@ -50,14 +62,51 @@ class GamesController < ApplicationController
   def draw_card
     if @current_player.position % 4 == 0
       card = @game.draw_card(@current_player)
-      ActionCable.server.broadcast(
-        "game_channel",
-        {
-          game: render_game,
-          card: "#{card.name}_#{card.value}"
-        }
-      )
+      if card.name == "encounter"
+        @card = card
+        ActionCable.server.broadcast(
+          "game_channel",
+          {
+            game: render_game,
+            card: "#{card.name}_#{card.value}",
+            encounter: true
+          }
+        )
+      else
+        ActionCable.server.broadcast(
+          "game_channel",
+          {
+            game: render_game,
+            card: "#{card.name}_#{card.value}"
+          }
+        )
+      end
     end
+  end
+
+  def end_encounter
+    if !params[:success]
+      if params[:card_spent][:name] == "ally"
+        current_player.allies.where(value: params[:card_spent][:value]).first.destroy
+      end
+      outcome = Resource.lose(current_player.resources.map(&:value), params[:resources_lost])
+      outcome[:remove].each do |value|
+        current_player.resources.find{|resource| resource.value == value}.destroy
+      end
+      outcome[:change].each do |value|
+        current_player.resources.create(value: value)
+      end
+    end
+    if params[:card_spent][:name] == "distraction"
+      current_player.distractions.where(value: params[:card_spent][:value]).first.destroy
+    end
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        game: render_game,
+        end_encounter: true
+      }
+    )
   end
 
   def end_turn
@@ -113,7 +162,7 @@ class GamesController < ApplicationController
       current_space: @current_space,
       connected_player: @connected_player,
       result: rand(5) + 1,
-      card: "ally_1.png"
+      card: @card
     }
   end
 

@@ -11,4 +11,4 @@
       .player{id: "#{current_player_id}", style: "background-color: #{Player::COLORS[player.color.to_sym]}; top: #{y + 10 + (rand(25) * 2)}px; left: #{x + 301 + (rand(25) * 2)}px;" }
         = player.name[0]
 
-#building{style: "background-image: url(/assets/buildings/building_#{current_player.position}.jpg)"}
+#building.takeover{style: "background-image: url(/assets/buildings/building_#{current_player.position}.jpg)"}

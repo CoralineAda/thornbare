@@ -3,19 +3,43 @@
   #game_info
     = render partial: "game_info", locals: { game: @game, current_player: @current_player, current_space: @current_space, connected_player: @connected_player }
 
-  #dice-result.fadeIn
+  #dice-result-container.takeover.fadeIn
     = render partial: "dice_result", locals: { result: @result }
 
-  #drawn-card.fadeIn
+  #drawn-card.takeover.fadeIn
     = render partial: "dice_result", locals: { card: @card }
 
   #board
     = render partial: "board", locals: { current_player: @current_player, spaces: @spaces, players: @players }
 
+  #cards.takeover.fadeIn
+    = render partial: "cards", locals: { current_player: @current_player }
+
+  #encounter.takeover.fadeIn.n-d
+    = render partial: "encounter", locals: { current_player: @current_player, card: @card }
+
+  #player-roll-container.takeover.fadeIn.n-d
+    %p
+      = "#{@current_player.name} rolled a "
+      %span#player-roll-value
+    .encounter-button-container
+      .btn#player-roll-confirm-button
+        Continue
+  #opponent-roll-container.takeover.fadeIn.n-d
+    %p
+      = "#{@current_player.name}'s opponent rolled a "
+      %span#opponent-roll-value
+    .encounter-button-container
+      .btn#opponent-roll-confirm-button
+        Continue
+
+  #encounter-outcome-container.takeover.fadeIn.n-d
+    %p#outcome
+    .encounter-button-container
+      .btn#outcome-confirm-button
+        Continue
+
   #players
     = render partial: "players", locals: { players: @players, current_player: @current_player }
-
-  #cards.fadeIn
-    = render partial: "cards", locals: { current_player: @current_player }
 
 #this-player{ data: { name: "#{@connected_player.name}"} }

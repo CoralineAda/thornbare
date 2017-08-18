@@ -46,6 +46,18 @@ fieldset {
   margin: 0px;
 }
 
+.mt-1 {
+  margin-top: 1em;
+}
+
+.mt-minus-1 {
+  margin-top: -1em;
+}
+
+.n-d {
+  display: none;
+}
+
 #game_info {
   float: left;
   width: 250px;
@@ -96,14 +108,21 @@ fieldset {
   z-index: 1000;
 }
 
-#building {
+.takeover {
   height: 505px;
   width: 505px;
   border: 5px solid #000;
   position: absolute;
   top: 90px;
   left: 380px;
+  background-color: #fff;
   background-size: cover;
+  text-align: center;
+}
+
+.takeover p {
+  font-size: 2em;
+  margin-top: 1em;
 }
 
 .player-indicator {
@@ -124,13 +143,7 @@ fieldset {
   width: 251px;
 }
 
-#dice-result {
-  height: 505px;
-  width: 505px;
-  border: 5px solid #000;
-  position: absolute;
-  top: 90px;
-  left: 380px;
+#dice-result-container {
   text-align: center;
   background: #eee url(/assets/dice.png) center center no-repeat;
   font-size: 60px;
@@ -138,11 +151,6 @@ fieldset {
 }
 
 #drawn-card {
-  height: 505px;
-  width: 505px;
-  position: absolute;
-  top: 90px;
-  left: 380px;
   z-index: 1000;
   background-position: center center;
   background-repeat: no-repeat;
@@ -186,13 +194,6 @@ fieldset {
 }
 
 #cards {
-  height: 505px;
-  width: 505px;
-  border: 5px solid #000;
-  position: absolute;
-  background-color: #fff;
-  top: 90px;
-  left: 380px;
   text-align: center;
   z-index: 2000;
 }
@@ -202,7 +203,6 @@ fieldset {
   width: 150px;
   margin-right: 15px;
   float: left;
-  border: 1px solid #ddd;
 }
 
 .card {
@@ -212,4 +212,35 @@ fieldset {
 
 .card img {
   width: 100px;
+}
+
+.card.selected {
+  border: 2px solid #444;
+}
+
+#encounter {
+  text-align: center;
+  z-index: 5000;
+}
+
+#player-roll-container {
+  background: #eee url(/assets/dice.png) center center no-repeat;
+  z-index: 5100;
+}
+
+#opponent-roll-container {
+  background: #eee url(/assets/dice.png) center center no-repeat;
+  z-index: 5200;
+}
+
+#encounter-outcome-container {
+  z-index: 5300;
+}
+
+.encounter-button-container {
+  position: absolute;
+  bottom: 10px;
+  left: 200px;
+  width: 200px
+  z-index: 6000;
 }
