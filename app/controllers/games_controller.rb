@@ -24,7 +24,8 @@ class GamesController < ApplicationController
   end
 
   def roll_to_move
-    result = rand(5) + 1
+    # result = rand(5) + 1
+    result = 4
     original_position = @current_player.position
     @current_player.update_attributes!(position: (@current_player.position + result) % 32)
     @current_space = Space.find_by(position: @current_player.position)
@@ -50,17 +51,16 @@ class GamesController < ApplicationController
 
   def draw_card
     if @current_player.position % 4 == 0
-      card = @game.draw_card(@current_player)
-      if card.name == "encounter"
-        @card = Card.new(name: "encounter", value: 3)
+#      card = @game.draw_card(@current_player)
+      @card = Card.new(name: "encounter", value: 3)
+      if @card.name == "encounter"
         ActionCable.server.broadcast(
           "game_channel",
           {
-            game: render_game,
+            encounter: render_encounter,
             card: "#{@card.name}_#{@card.value}",
             value: @card.value,
             resources: current_player.resources.map(&:value).sort,
-            encounter: true
           }
         )
       else
@@ -68,7 +68,7 @@ class GamesController < ApplicationController
           "game_channel",
           {
             game: render_game,
-            card: "#{card.name}_#{card.value}"
+            card: "#{@card.name}_#{@card.value}"
           }
         )
       end
@@ -143,6 +143,10 @@ class GamesController < ApplicationController
       players: @players,
       current_player: @current_player
     }
+  end
+
+  def render_encounter
+    render partial: "encounter", locals: { current_player: current_player, card: @card }
   end
 
   def render_cards

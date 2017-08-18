@@ -17,11 +17,13 @@ App.game = App.cable.subscriptions.create "GameChannel",
       $('#game').html(data.game)
 
     if data.move_result?
+      disableRollToMove()
       $('#players').html(data.players)
       doMove(data.from_position, data.to_position, data.move_result)
 
     if data.card?
       if data.encounter?
+        $('#encounter').html(data.encounter)
         showEncounter(data.card, data.value, data.resources)
       else
         showCard(data.card)
@@ -135,7 +137,6 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#drawn-card').addClass('appear')
     $('#drawn-card').css("background-image", "url(/assets/cards/" + card + ".png)")
     disableDrawACard()
-    enableEndTurn()
     setTimeout (->
       $('#drawn-card').removeClass 'appear'
       return
@@ -164,16 +165,16 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('.card').click ->
       $('.card').removeClass('selected')
       $(this).addClass('selected')
-      if $(this).data.name == "ally"
-        additionalDice = $(this).data.value
+      if $(this).data("name") == "ally"
+        additionalDice = $(this).data("value")
         cardInPlay = "Ally"
-        cardInPlayValue = $(this).data.value
+        cardInPlayValue = $(this).data("value")
       else
-        diceReduction = $(this).data.value
+        diceReduction = $(this).data("value")
         if difficulty - diceReduction < 1
           diceReduction += difficulty - diceReduction - 1
         cardInPlay = "Distraction"
-        cardInPlayValue = $(this).data.value
+        cardInPlayValue = $(this).data("value")
 
     $('#roll-for-encounter').click ->
       $('#encounter').addClass('n-d')
@@ -192,6 +193,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
         $('#outcome').html("You fought bravely but were overcome... You have lost " + difficulty + " resources.")
 
     $('#outcome-confirm-button').click ->
+      enableEndTurn()
       $.post 'end_encounter', {
           success: success
           card_spent: { name: cardInPlay, value: cardInPlayValue },

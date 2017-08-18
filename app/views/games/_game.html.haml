@@ -5,7 +5,7 @@
   = render partial: "dice_result", locals: { result: result }
 
 #drawn-card.takeover.fadeIn
-  = render partial: "dice_result", locals: { card: card }
+  = render partial: "drawn_card", locals: { card: card }
 
 #board
   = render partial: "board", locals: { current_player: current_player, spaces: spaces, players: players }
@@ -18,14 +18,14 @@
 
 #player-roll-container.takeover.fadeIn.n-d
   %p
-    = "#{@current_player.name} rolled a "
+    = "#{@current_player.name} rolled "
     %span#player-roll-value
   .encounter-button-container
     .btn#player-roll-confirm-button
       Continue
 #opponent-roll-container.takeover.fadeIn.n-d
   %p
-    = "#{@current_player.name}'s opponent rolled a "
+    = "#{@current_player.name}'s opponent rolled "
     %span#opponent-roll-value
   .encounter-button-container
     .btn#opponent-roll-confirm-button

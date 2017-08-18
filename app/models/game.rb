@@ -58,9 +58,9 @@ class Game < ApplicationRecord
   def card_value
     case rand(10)
     when 0..1; 1
-    when 2..3; 2
-    when 4..6; 3
-    when 7..8; 4
+    when 2..4; 2
+    when 5..7; 3
+    when 8; 4
     when 9; 5
     end
   end

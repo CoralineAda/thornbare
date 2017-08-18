@@ -205,11 +205,11 @@ fieldset {
   float: left;
 }
 
-.card {
+.card-container {
   position: absolute;
 }
 
-.card img {
+.card {
   width: 100px;
 }
 
