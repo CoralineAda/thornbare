@@ -39,6 +39,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
     if thisPlayer == currentPlayer
       $('#roll-to-move-button').removeClass('disabled')
       $('#roll-to-move-button').click ->
+        $('#roll-to-move-button').off('click')
         $.post 'roll_to_move', {}, (data, status) ->
           return
         return

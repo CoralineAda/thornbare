@@ -24,30 +24,19 @@ class GamesController < ApplicationController
   end
 
   def roll_to_move
-    @card = Card.new(name: "encounter", value: 3)
+    result = rand(5) + 1
+    original_position = @current_player.position
+    @current_player.update_attributes!(position: (@current_player.position + result) % 32)
+    @current_space = Space.find_by(position: @current_player.position)
     ActionCable.server.broadcast(
       "game_channel",
       {
-        game: render_game,
-        card: "#{@card.name}_#{@card.value}",
-        value: @card.value,
-        resources: current_player.resources.map(&:value).sort,
-        encounter: true
+        players: render_players,
+        from_position: original_position,
+        to_position: @current_player.position,
+        move_result: result
       }
     )
-    # result = rand(5) + 1
-    # original_position = @current_player.position
-    # @current_player.update_attributes!(position: (@current_player.position + result) % 32)
-    # @current_space = Space.find_by(position: @current_player.position)
-    # ActionCable.server.broadcast(
-    #   "game_channel",
-    #   {
-    #     players: render_players,
-    #     from_position: original_position,
-    #     to_position: @current_player.position,
-    #     move_result: result
-    #   }
-    # )
   end
 
   def show_cards
@@ -63,12 +52,14 @@ class GamesController < ApplicationController
     if @current_player.position % 4 == 0
       card = @game.draw_card(@current_player)
       if card.name == "encounter"
-        @card = card
+        @card = Card.new(name: "encounter", value: 3)
         ActionCable.server.broadcast(
           "game_channel",
           {
             game: render_game,
-            card: "#{card.name}_#{card.value}",
+            card: "#{@card.name}_#{@card.value}",
+            value: @card.value,
+            resources: current_player.resources.map(&:value).sort,
             encounter: true
           }
         )
@@ -155,7 +146,7 @@ class GamesController < ApplicationController
   end
 
   def render_cards
-    render partial: "cards", locals: { current_player: @current_player }
+    render partial: "cards", locals: { current_player: current_player }
   end
 
   def render_game

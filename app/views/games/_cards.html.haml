@@ -1,14 +1,14 @@
 .card-column
-  - current_player.allies.sort_by(&:value).each_with_index do |card, i|
-    .card{ style: "top: #{60 * i}px" }
+  - current_player.resources.sort_by(&:value).each_with_index do |card, i|
+    .card{ style: "top: #{60 * i}px; left: 0px;" }
       = image_tag "/assets/cards/#{card.card}"
 
 .card-column
-  - current_player.resources.sort_by(&:value).each_with_index do |card, i|
-    .card{ style: "top: #{60 * i}px" }
+  - current_player.allies.sort_by(&:value).each_with_index do |card, i|
+    .card{ style: "top: #{60 * i}px; left: 150px;" }
       = image_tag "/assets/cards/#{card.card}"
 
 .card-column
   - current_player.distractions.sort_by(&:value).each_with_index do |card, i|
-    .card{ style: "top: #{60 * i}px" }
+    .card{ style: "top: #{60 * i}px; left: 300px;" }
       = image_tag "/assets/cards/#{card.card}"
