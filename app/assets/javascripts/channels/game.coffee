@@ -19,7 +19,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
       showCard(data.card)
     if data.cards?
       $('#cards').html(data.cards)
-      showCards() # THIS IS FAILING INTERMITTENTLY
+      showCards()
 
   currentPosition = () ->
     parseInt($('#the-current-player').data("position"))

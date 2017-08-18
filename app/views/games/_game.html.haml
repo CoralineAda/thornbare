@@ -10,5 +10,8 @@
 #board
   = render partial: "board", locals: { current_player: current_player, spaces: spaces, players: players }
 
+#cards.fadeIn
+  = render partial: "cards", locals: { current_player: @current_player }
+
 #players
   = render partial: "players", locals: { players: players, current_player: current_player }
