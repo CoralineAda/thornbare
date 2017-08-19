@@ -13,31 +13,10 @@
     = render partial: "board", locals: { current_player: @current_player, spaces: @spaces, players: @players }
 
   #cards.takeover.fadeIn
-    = render partial: "cards", locals: { current_player: @current_player }
+    = render partial: "choose_card", locals: { current_player: @current_player, card: Card.new }
 
   #encounter.takeover.fadeIn.n-d
     = render partial: "encounter", locals: { current_player: @current_player, card: @card }
-
-  #player-roll-container.takeover.fadeIn.n-d
-    %p
-      = "#{@current_player.name} rolled "
-      %span#player-roll-value
-    .encounter-button-container
-      .btn#player-roll-confirm-button
-        Continue
-  #opponent-roll-container.takeover.fadeIn.n-d
-    %p
-      = "#{@current_player.name}'s opponent rolled "
-      %span#opponent-roll-value
-    .encounter-button-container
-      .btn#opponent-roll-confirm-button
-        Continue
-
-  #encounter-outcome-container.takeover.fadeIn.n-d
-    %p#outcome
-    .encounter-button-container
-      .btn#outcome-confirm-button
-        Continue
 
   #players
     = render partial: "players", locals: { players: @players, current_player: @current_player }

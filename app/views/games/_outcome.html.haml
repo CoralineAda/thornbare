@@ -1,0 +1,14 @@
+#outcome
+  - if outcome == "draw"
+    It's a draw! Both sides leave the fight, exhausted.
+  - if outcome == "success"
+    You have prevailed over your enemy!
+  - if outcome == "failure"
+    - if ally
+      = "You fought bravely but were overcome...<br> You have lost #{pluralize(resources_lost, "resource")}  and a valuable ally."
+    - else
+      = "You fought bravely but were overcome...<br> You have lost #{pluralize(resources_lost, "resource")} resources."
+
+  .encounter-button-container
+    .btn#outcome-confirm-button
+      End Encounter

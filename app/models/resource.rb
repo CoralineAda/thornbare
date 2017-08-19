@@ -4,7 +4,7 @@ class Resource < ApplicationRecord
 
   belongs_to :player
 
-  def self.lose(player, resource_values, total_resources_lost)
+  def self.lose(resource_values, total_resources_lost)
     sorted = resource_values.sort.reverse
     resources_to_remove = []
     resources_in_change = []

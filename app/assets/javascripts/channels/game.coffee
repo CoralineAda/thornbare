@@ -13,6 +13,11 @@ App.game = App.cable.subscriptions.create "GameChannel",
       disableShowCards()
       enableShowCards()
 
+    if data.reset?
+      $('#game').html(data.game)
+      enableShowCards()
+      enableEndTurn()
+
     if data.end_encounter?
       $('#game').html(data.game)
 
@@ -23,19 +28,38 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
     if data.card?
       if data.encounter?
-        $('#encounter').html(data.encounter)
-        showEncounter(data.card, data.value, data.resources)
+        $('#game').html(data.game)
+        showCard(data.card, data.card_type)
+        setTimeout (->
+          $('#drawn-card').removeClass 'appear'
+          return
+        ), 4000
+        setTimeout (->
+          $.post data.next_step, {}, (data, status) ->
+            return
+          return
+        ), 2000
       else
-        showCard(data.card)
+        showCard(data.card, data.card_type)
 
     if data.encounter_in_progress
-      if data.step == "choose_cards" # populate cards; post contains chosen_card and chosen_value
+      if data.step == "choose_card"
+        $('#cards').html = data.encounter
         chooseCards()
-      if data.step == "show_card" # populate selected card
+      if data.step == "show_ally_or_distraction"
+        $('#encounter').html(data.encounter)
+        $('#encounter').removeClass('n-d')
+        $('#encounter').addClass('appear')
         showAllyOrDistraction()
       if data.step == "show_rolls"
-        showRolls()
+        $('#encounter').html(data.encounter)
+        $('#encounter').removeClass('n-d')
+        $('#encounter').addClass('appear')
+        showRolls(data.outcome)
       if data.step == "show_outcome"
+        $('#encounter').html(data.encounter)
+        $('#encounter').removeClass('n-d')
+        $('#encounter').addClass('appear')
         showOutcome()
 
     if data.cards?
@@ -47,11 +71,13 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
   thisPlayerIsCurrentPlayer = () ->
     thisPlayer = $('#this-player').data("name")
-    currentPlayer = $('#current-player').data("name")
-    return thisPlayer == currentPlayer
+    return thisPlayer == currentPlayer()
+
+  currentPlayer = () ->
+    return $('#current-player').data("name")
 
   enableRollToMove = () ->
-    if thisPlayerIsCurrentPlayer == true == true
+    if thisPlayerIsCurrentPlayer() == true == true
       $('#roll-to-move-button').removeClass('disabled')
       $('#roll-to-move-button').click ->
         $('#roll-to-move-button').off('click')
@@ -64,7 +90,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#roll-to-move-button').addClass('disabled')
 
   enableShowCards = () ->
-    if thisPlayerIsCurrentPlayer == true
+    if thisPlayerIsCurrentPlayer() == true
       $('#show-cards-button').removeClass('disabled')
       $('#show-cards-button').click ->
         $.post 'show_cards', {}, (data, status) ->
@@ -88,7 +114,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
   enableDrawACard = () ->
     if currentPosition() % 4 == 0
-      if thisPlayerIsCurrentPlayer == true
+      if thisPlayerIsCurrentPlayer() == true
         $('#draw-a-card-button').removeClass('disabled')
         $('#draw-a-card-button').click ->
           $.post 'draw_card', {}, (data, status) ->
@@ -102,7 +128,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#draw-a-card-button').addClass('disabled')
 
   enableEndTurn = () ->
-    if thisPlayerIsCurrentPlayer == true
+    if thisPlayerIsCurrentPlayer() == true
       $('#end-turn-button').removeClass('disabled')
       $('#end-turn-button').click ->
         $.post 'end_turn', {}, (data, status) ->
@@ -111,10 +137,10 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
   doMove = (from_position, to_position, result) ->
     $('#dice-result-container').addClass('appear')
-    if thisPlayerIsCurrentPlayer == true
+    if thisPlayerIsCurrentPlayer() == true
       $('#dice-result-container').text("You rolled a " + result)
     else
-      $('#dice-result-container').text(currentPlayer + " rolled a " + result)
+      $('#dice-result-container').text(currentPlayer() + " rolled a " + result)
     new_space = $('#space-' + to_position)
     new_position = new_space.offset()
     $('#current-player-token').animate {
@@ -128,80 +154,69 @@ App.game = App.cable.subscriptions.create "GameChannel",
       enableDrawACard()
       return
 
-  showCard = (card) ->
+  showCard = (card, cardType) ->
     $('#drawn-card').addClass('appear')
     $('#drawn-card').css("background-image", "url(/assets/cards/" + card + ".png)")
     disableDrawACard()
-    enableEndTurn()
+    if cardType != "encounter"
+      enableEndTurn()
     setTimeout (->
       $('#drawn-card').removeClass 'appear'
       return
     ), 4000
 
   showEncounter = (card, difficulty) ->
-    $('#drawn-card').addClass('appear')
-    $('#drawn-card').css("background-image", "url(/assets/cards/" + card + ".png)")
     disableDrawACard()
-    setTimeout (->
-      $('#drawn-card').removeClass 'appear'
-      return
-    ), 4000
-
     $('#encounter').removeClass('n-d')
     $('#encounter').addClass('appear')
     $('#continue-button').click ->
-      $.post 'choose_cards', {
+      $.post 'choose_card', {
         drawn_card: $('#drawn-card').data('value')
       }, (data, status) ->
         return
       return
 
   chooseCards = () ->
-    if thisPlayerIsCurrentPlayer == true
+    $('#cards').removeClass('n-d')
+    $('#cards').addClass('appear')
+    if thisPlayerIsCurrentPlayer() == true
       $('.card').click ->
         $('.card').removeClass('selected')
         $(this).addClass('selected')
-        if $(this).data("name") == "ally"
-          cardInPlay = "Ally"
-          cardInPlayValue = $(this).data("value")
-        else
-          # diceReduction = $(this).data("value")
-          # if difficulty - diceReduction < 1
-          #   diceReduction += difficulty - diceReduction - 1
-          cardInPlay = "Distraction"
-          cardInPlayValue = $(this).data("value")
-    $('#continue-button').click ->
-      $.post 'show_chosen_card', {
-        chosen_card: $('.card.selected').data('name'),
-        chosen_value: $('.card.selected').data('value')
-      }, (data, status) ->
-        return
-      return
 
-  showAllyOrDistraction = (card) ->
-    $('#chosen-card').html(card)
+    if thisPlayerIsCurrentPlayer() == true
+      $('#continue-button').click ->
+        $.post 'show_ally_or_distraction', {
+          chosen_card: $('.card.selected').data('name'),
+          chosen_value: $('.card.selected').data('value')
+        }, (data, status) ->
+          return
+        return
+    else
+      $('#continue-button').addClass('disabled')
+
+  showAllyOrDistraction = () ->
     $('#chosen-card-container').removeClass('n-d')
     $('#chosen-card-container').addClass('appear')
-    $('#continue-button').click ->
-      $.post 'show_rolls', {}, (data, status) ->
+    if thisPlayerIsCurrentPlayer() == true
+      $('#roll-dice').click ->
+        $.post 'show_rolls', {}, (data, status) ->
+          return
         return
-      return
+    else
+      $('#continue-button').addClass('disabled')
 
-  showRolls = () ->
+  showRolls = (outcome) ->
     $('#player-roll-container').removeClass('n-d')
-    setTimeout (->
-      $('#player-roll-container').addClass('appear')
-      $('#opponent-roll-container').addClass('appear')
-      return
-    ), 4000
-
+    $('#player-roll-container').addClass('appear')
     $('#opponent-roll-container').removeClass('n-d')
     setTimeout (->
       $('#opponent-roll-container').addClass('appear')
+      $('#player-roll-container').removeClass('appear')
       return
-    ), 4000
-    $('#continue-button').click ->
-      $.post 'show_outcome', {}, (data, status) ->
+    ), 2000
+    $('#show-result-button').click ->
+      $.post 'show_outcome', { outcome: outcome }, (data, status) ->
         return
       return
 
@@ -209,7 +224,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#encounter-outcome-container').removeClass('n-d')
     $('#encounter-outcome-container').addClass('appear')
 
-    if thisPlayerIsCurrentPlayer == true
+    if thisPlayerIsCurrentPlayer() == true
       $('#outcome-confirm-button').click ->
         enableEndTurn()
         $.post 'end_encounter', {}, (data, status) ->

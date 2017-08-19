@@ -30,6 +30,7 @@ input[type='submit'] {
   cursor: pointer;
   text-align: center;
   margin-bottom: 1em;
+  z-index: 10000;
 }
 
 .btn.disabled {
@@ -163,6 +164,15 @@ fieldset {
   background-size: 337px 472px;
 }
 
+#ally-or-distraction-image {
+  margin-top: 2em;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 337px 472px;
+  height: 338px;
+  width: 472px;
+}
+
 .fadeIn {
   opacity: 0.0;
   transition: opacity .5s ease-in-out;
@@ -195,7 +205,7 @@ fieldset {
 
 #cards {
   text-align: center;
-  z-index: 2000;
+  z-index: 3000;
 }
 
 .card-column {
@@ -210,6 +220,10 @@ fieldset {
 }
 
 .card {
+  width: 100px;
+}
+
+.card img {
   width: 100px;
 }
 
@@ -244,6 +258,24 @@ fieldset {
   z-index: 6000;
 }
 
+.roll-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-image: url(/assets/dice.png);
+  background-size: 150px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 505px;
+  width: 505px;
+}
+
 #outcome {
-  background: #eee url(/assets/battle.jpg) center center no-repeat;
+  text-align: center;
+  background-image: url(/assets/battle.jpg);
+  background-size: 510px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 450px;
+  width: 505px;
 }

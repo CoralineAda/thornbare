@@ -1,15 +1,10 @@
-#player-roll-container.takeover.fadeIn.n-d
+#player-roll-container.roll-container.fadeIn.n-d
   %p
-    = "#{current_player.name} rolled "
-    %span#player-roll-value
-      = player_result
+    = "#{@current_player.name} rolled #{player_result}"
 
-#opponent-roll-container.takeover.fadeIn.n-d
+#opponent-roll-container.roll-container.fadeIn.n-d
   %p
-    = "#{current_player.name}'s opponent rolled "
-    %span#opponent-roll-value
-      = opponent_result
-
-.encounter-button-container
-  .btn#continue-button
-    Continue
+    = "#{@current_player.name}'s opponent rolled #{opponent_result}"
+  .encounter-button-container
+    .btn#show-result-button
+      Continue

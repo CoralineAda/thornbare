@@ -51,16 +51,18 @@ class GamesController < ApplicationController
 
   def draw_card
     if @current_player.position % 4 == 0
-#      card = @game.draw_card(@current_player)
+#      @card = @game.draw_card(@current_player)
       @card = Card.new(name: "encounter", value: 3)
-      session[:encounter_value] = @card.value
       if @card.name == "encounter"
+        session[:encounter_value] = @card.value
         ActionCable.server.broadcast(
           "game_channel",
           {
-            encounter: render_encounter,
+            encounter: render_game,
             card: "#{@card.name}_#{@card.value}",
+            card_type: @card.name,
             value: @card.value,
+            next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_rolls"
           }
         )
       else
@@ -75,34 +77,37 @@ class GamesController < ApplicationController
     end
   end
 
-  def choose_cards
+  def choose_card
     ActionCable.server.broadcast(
       "game_channel",
       {
         encounter: render(
-          partial: "choose_cards",
+          partial: "choose_card",
           locals: {
             current_player: current_player,
             card: Card.new(name: "encounter", value: session[:encounter_value])
           }
         ),
-        step: "choose_cards",
+        encounter_in_progress: true,
+        step: "choose_card",
         encounter_value: session[:encounter_value],
       }
     )
   end
 
   def show_ally_or_distraction
-    session[:ally_or_distraction] = { name: params[:name], value: params[:value] }
+    session[:ally_or_distraction] = { name: params[:chosen_card], value: params[:chosen_value] }
     ActionCable.server.broadcast(
       "game_channel",
       {
         encounter: render(
           partial: "show_ally_or_distraction",
           locals: {
-            card: Card.new(name: session[:ally_or_distraction][:name], value: session[:ally_or_distraction][:value])
+            card: Card.new(name: session[:ally_or_distraction][:name], value: session[:ally_or_distraction][:value]),
+            card_type: session[:ally_or_distraction][:name]
           }
         ),
+        encounter_in_progress: true,
         step: "show_ally_or_distraction",
       }
     )
@@ -111,40 +116,16 @@ class GamesController < ApplicationController
   def show_rolls
     additional_dice = 0
     dice_reduction = 0
-    if session[:ally_or_distraction][:name] == "ally"
-      additional_dice = session[:ally_or_distraction][:value].to_i
-    elsif session[:ally_or_distraction][:name] == "distraction"
-      dice_reduction = session[:ally_or_distraction][:value].to_i
+    if session[:ally_or_distraction] && session[:ally_or_distraction]['name'] == "ally"
+      additional_dice = session[:ally_or_distraction]['value'].to_i
+    elsif session[:ally_or_distraction] && session[:ally_or_distraction]['name'] == "distraction"
+      dice_reduction = session[:ally_or_distraction]['value'].to_i
       if session[:encounter_value] - dice_reduction < 1
         dice_reduction += session[:encounter_value] - dice_reduction - 1
       end
     end
-    session[:player_result] = Game.roll_dice(1 + additional_dice)
-    session[:opponent_result] = Game.roll_dice(session[:encounter_value] - dice_reduction)
-    ActionCable.server.broadcast(
-      "game_channel",
-      {
-        encounter: render(
-          partial: "rolls",
-          locals: {
-            player_result: session[:player_result],
-            opponent_result: session[:opponent_result]
-          }
-        ),
-        step: "show_rolls"
-      }
-    )
-  end
-
-  def show_outcome
-    player_result = session[:player_result]
-    opponent_result = session[:opponent_result]
-
-    session[:player_result] = nil
-    session[:opponent_result] = nil
-    session[:encounter_value] = nil
-    session[:ally_or_distraction] = nil
-
+    player_result = Game.roll_dice(1 + additional_dice)
+    opponent_result = Game.roll_dice(session[:encounter_value] - dice_reduction)
     if player_result == opponent_result
       outcome = "draw"
     elsif player_result > opponent_result
@@ -152,7 +133,24 @@ class GamesController < ApplicationController
     else
       outcome = "failure"
     end
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        encounter: render(
+          partial: "show_rolls",
+          locals: {
+            player_result: player_result,
+            opponent_result: opponent_result
+          }
+        ),
+        encounter_in_progress: true,
+        outcome: outcome,
+        step: "show_rolls"
+      }
+    )
+  end
 
+  def show_outcome
     resources_lost = Resource.lose(@current_player.resources.map(&:value), session[:encounter_value])
     resources_lost[:remove].each do |value|
       @current_player.resources.find{|r| r.value == value}.destroy
@@ -161,47 +159,43 @@ class GamesController < ApplicationController
       @current_player.resources.create(value: value)
     end
 
+    if lost_card = session[:ally_or_distraction]
+      if lost_card['name'] == "ally" && params[:outcome] == "failure"
+        @current_player.allies.find{ |ally| ally.value == lost_card['value'].to_i }.destroy
+      elsif lost_card['name'] == "distraction"
+        @current_player.distractions.find{ |distraction| distraction.value == lost_card['value'].to_i }.destroy
+      end
+    end
+
+    session[:player_result] = nil
+    session[:opponent_result] = nil
+    session[:encounter_value] = nil
+    session[:ally_or_distraction] = nil
+
     ActionCable.server.broadcast(
       "game_channel",
       {
         encounter: render(
           partial: "outcome",
           locals: {
-            outcome: outcome,
-            resources_lost: resources_lost[:remove].sum
+            outcome: params[:outcome],
+            resources_lost: resources_lost[:remove].sum,
+            ally: lost_card && lost_card['name'] == "ally"
           }
         ),
+        encounter_in_progress: true,
         step: "show_outcome"
       }
     )
   end
 
   def end_encounter
-    if !params[:success]
-      if params[:card_spent][:name] == "ally"
-        current_player.allies.where(value: params[:card_spent][:value]).first.destroy
-      end
-      outcome = Resource.lose(current_player.resources.map(&:value), params[:resources_lost])
-      outcome[:remove].each do |value|
-        current_player.resources.find{|resource| resource.value == value}.destroy
-      end
-      outcome[:change].each do |value|
-        current_player.resources.create(value: value)
-      end
-    end
-    if params[:card_spent][:name] == "distraction"
-      current_player.distractions.where(value: params[:card_spent][:value]).first.destroy
-    end
-    @game.next_turn
-    if @game.turn == @players.count
-      @game.next_round
-    end
-    @current_player = @players[@game.turn]
+    @card = Card.new
     ActionCable.server.broadcast(
       "game_channel",
       {
         game: render_game,
-        next_turn: true
+        reset: true
       }
     )
   end
@@ -212,6 +206,7 @@ class GamesController < ApplicationController
       @game.next_round
     end
     @current_player = @players.any? && @players[@game.turn]
+    @card = Card.new
     ActionCable.server.broadcast(
       "game_channel",
       {

@@ -7,8 +7,8 @@ class Game < ApplicationRecord
 
   def self.roll_dice(quantity)
     total = 0
-    1..quantity.to_a.each do |die_number|
-      total += rand(5) + 1
+    (1..quantity).to_a.each do |die_number|
+      total += rand(6) + 1
     end
     total
   end
