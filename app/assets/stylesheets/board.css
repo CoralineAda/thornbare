@@ -212,6 +212,7 @@ fieldset {
   position: relative;
   width: 150px;
   margin-right: 15px;
+  margin-left: 60px;
   float: left;
 }
 
@@ -220,6 +221,7 @@ fieldset {
 }
 
 .card {
+  position: absolute;
   width: 100px;
 }
 

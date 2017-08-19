@@ -49,12 +49,6 @@ class Game < ApplicationRecord
     update_attribute(:turn, self.turn + 1)
   end
 
-  private
-
-  def set_name
-    self.name = "#{Faker::Lovecraft.word.capitalize} #{Faker::Lovecraft.location}"
-  end
-
   def card_value
     case rand(10)
     when 0..1; 1
@@ -63,6 +57,12 @@ class Game < ApplicationRecord
     when 8; 4
     when 9; 5
     end
+  end
+
+  private
+
+  def set_name
+    self.name = "#{Faker::Lovecraft.word.capitalize} #{Faker::Lovecraft.location}"
   end
 
 end

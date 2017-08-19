@@ -148,7 +148,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
       top: new_position.top + Math.floor(Math.random() * 50)
     }, 1000, ->
       $('#dice-result-container').removeClass('appear')
-      $('#building').css("background-image", "url(/assets/buildings/building_" + to_position + ".jpg)")
+      $('#building').css("background-image", "url(/assets/buildings/building_" + (to_position % 32) + ".jpg)")
       $('#card-button').removeClass('disabled')
       disableRollToMove()
       enableDrawACard()
