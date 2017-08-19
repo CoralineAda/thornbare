@@ -53,6 +53,7 @@ class GamesController < ApplicationController
     if @current_player.position % 4 == 0
 #      card = @game.draw_card(@current_player)
       @card = Card.new(name: "encounter", value: 3)
+      session[:encounter_value] = @card.value
       if @card.name == "encounter"
         ActionCable.server.broadcast(
           "game_channel",
@@ -60,7 +61,6 @@ class GamesController < ApplicationController
             encounter: render_encounter,
             card: "#{@card.name}_#{@card.value}",
             value: @card.value,
-            resources: current_player.resources.map(&:value).sort,
           }
         )
       else
@@ -73,6 +73,107 @@ class GamesController < ApplicationController
         )
       end
     end
+  end
+
+  def choose_cards
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        encounter: render(
+          partial: "choose_cards",
+          locals: {
+            current_player: current_player,
+            card: Card.new(name: "encounter", value: session[:encounter_value])
+          }
+        ),
+        step: "choose_cards",
+        encounter_value: session[:encounter_value],
+      }
+    )
+  end
+
+  def show_ally_or_distraction
+    session[:ally_or_distraction] = { name: params[:name], value: params[:value] }
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        encounter: render(
+          partial: "show_ally_or_distraction",
+          locals: {
+            card: Card.new(name: session[:ally_or_distraction][:name], value: session[:ally_or_distraction][:value])
+          }
+        ),
+        step: "show_ally_or_distraction",
+      }
+    )
+  end
+
+  def show_rolls
+    additional_dice = 0
+    dice_reduction = 0
+    if session[:ally_or_distraction][:name] == "ally"
+      additional_dice = session[:ally_or_distraction][:value].to_i
+    elsif session[:ally_or_distraction][:name] == "distraction"
+      dice_reduction = session[:ally_or_distraction][:value].to_i
+      if session[:encounter_value] - dice_reduction < 1
+        dice_reduction += session[:encounter_value] - dice_reduction - 1
+      end
+    end
+    session[:player_result] = Game.roll_dice(1 + additional_dice)
+    session[:opponent_result] = Game.roll_dice(session[:encounter_value] - dice_reduction)
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        encounter: render(
+          partial: "rolls",
+          locals: {
+            player_result: session[:player_result],
+            opponent_result: session[:opponent_result]
+          }
+        ),
+        step: "show_rolls"
+      }
+    )
+  end
+
+  def show_outcome
+    player_result = session[:player_result]
+    opponent_result = session[:opponent_result]
+
+    session[:player_result] = nil
+    session[:opponent_result] = nil
+    session[:encounter_value] = nil
+    session[:ally_or_distraction] = nil
+
+    if player_result == opponent_result
+      outcome = "draw"
+    elsif player_result > opponent_result
+      outcome = "success"
+    else
+      outcome = "failure"
+    end
+
+    resources_lost = Resource.lose(@current_player.resources.map(&:value), session[:encounter_value])
+    resources_lost[:remove].each do |value|
+      @current_player.resources.find{|r| r.value == value}.destroy
+    end
+    resources_lost[:change].each do |value|
+      @current_player.resources.create(value: value)
+    end
+
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        encounter: render(
+          partial: "outcome",
+          locals: {
+            outcome: outcome,
+            resources_lost: resources_lost[:remove].sum
+          }
+        ),
+        step: "show_outcome"
+      }
+    )
   end
 
   def end_encounter

@@ -5,18 +5,18 @@ class Game < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :encounters
 
-  def available_colors
-    colors = Player::COLORS.keys.map(&:to_s)
-    player_colors = self.players.map(&:color).map{ |color| color.downcase.split.join('_') }
-    colors - player_colors
-  end
-
-  def roll_dice(quantity)
+  def self.roll_dice(quantity)
     total = 0
     1..quantity.to_a.each do |die_number|
       total += rand(5) + 1
     end
     total
+  end
+
+  def available_colors
+    colors = Player::COLORS.keys.map(&:to_s)
+    player_colors = self.players.map(&:color).map{ |color| color.downcase.split.join('_') }
+    colors - player_colors
   end
 
   def draw_card(player)

@@ -243,3 +243,7 @@ fieldset {
   width: 200px
   z-index: 6000;
 }
+
+#outcome {
+  background: #eee url(/assets/battle.jpg) center center no-repeat;
+}
