@@ -24,9 +24,12 @@ class GamesController < ApplicationController
   end
 
   def roll_to_move
-    # result = rand(5) + 1
-    result = 4
+    result = rand(5) + 1
     original_position = @current_player.position
+    passed_go = @current_player.position + result >= 32
+    if passed_go
+      @current_player.resources.create(value: @game.card_value)
+    end
     @current_player.update_attributes!(position: (@current_player.position + result) % 32)
     @current_space = Space.find_by(position: @current_player.position)
     ActionCable.server.broadcast(
@@ -51,8 +54,7 @@ class GamesController < ApplicationController
 
   def draw_card
     if @current_player.position % 4 == 0
-#      @card = @game.draw_card(@current_player)
-      @card = Card.new(name: "encounter", value: 3)
+      @card = @game.draw_card(@current_player)
       if @card.name == "encounter"
         session[:encounter_value] = @card.value
         ActionCable.server.broadcast(
