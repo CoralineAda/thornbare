@@ -15,6 +15,11 @@ Rails.application.routes.draw do
     post :end_encounter, to: :end_encounter
     post :final_encounter, to: :final_encounter
     post :the_end, to: :the_end
+    post :select_trading_partner, to: :select_trading_partner
+    post :select_cards_to_trade, to: :select_cards_to_trade
+    post :do_trade_cards, to: :do_trade_cards
+    post :cancel_trade_cards, to: :cancel_trade_cards
+
     resources :players
   end
 

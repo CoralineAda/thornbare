@@ -1,0 +1,38 @@
+%p.small
+  What card do you want to give?
+
+.card-column
+  - cards_histogram = @current_player.resources.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}
+  - cards_histogram.sort{|a,b| a[0] <=> b[0]}.each_with_index do |tuple, i|
+    - card = Card.new(name: "resource", value: tuple[0])
+    .card-container
+      .card.absolute{ style: "top: #{75 * i}px; left: 0px;", data: { name: "resource", value: card.value } }
+        %img{ src: "/assets/cards/#{card.card_image}" }
+        .card-label.absolute{ style: "top: 20px; right: 0px;"}
+          = "x #{tuple[1]}"
+
+.card-column
+  - cards_histogram = @current_player.allies.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}
+  - cards_histogram.sort{|a,b| a[0] <=> b[0]}.each_with_index do |tuple, i|
+    - card = Card.new(name: "ally", value: tuple[0])
+    .card-container
+      .card.absolute{ style: "top: #{75 * i}px; left: 150px;", data: { name: "ally", value: card.value } }
+        %img{ src: "/assets/cards/#{card.card_image}" }
+        .card-label.absolute{ style: "top: 20px; right: 0px;"}
+          = "x #{tuple[1]}"
+
+.card-column
+  - cards_histogram = @current_player.distractions.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}
+  - cards_histogram.sort{|a,b| a[0] <=> b[0]}.each_with_index do |tuple, i|
+    - card = Card.new(name: "distraction", value: tuple[0])
+    .card-container
+      .card.absolute{ style: "top: #{75 * i}px; left: 300px;", data: { name: "distraction", value: card.value } }
+        %img{ src: "/assets/cards/#{card.card_image}" }
+        .card-label.absolute{ style: "top: 20px; right: 0px;"}
+          = "x #{tuple[1]}"
+
+.encounter-button-container.f-r
+  .btn#give-card-button
+    Give card to #{trading_partner}
+  .btn#trade-cancel-button
+    Cancel

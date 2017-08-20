@@ -28,17 +28,19 @@ class GamesController < ApplicationController
     original_position = @current_player.position
     if @current_player.position + result >= 32
       @current_player.resources.create(value: @game.card_value)
-      @current_player.update_attribute(times_around_the_board: @current_player.times_around_the_board += 1)
+      @current_player.update_attribute(:times_around_the_board,  @current_player.times_around_the_board + 1)
     end
     @current_player.update_attributes(position: (@current_player.position + result) % 32)
     @current_space = Space.find_by(position: @current_player.position)
+    can_trade_cards = @game.players.active.where(position: @current_player.position).count > 1
     ActionCable.server.broadcast(
       "game_channel",
       {
         players: render_players,
         from_position: original_position,
         to_position: @current_player.position,
-        move_result: result
+        move_result: result,
+        can_trade_cards: can_trade_cards
       }
     )
   end
@@ -55,6 +57,7 @@ class GamesController < ApplicationController
   def draw_card
     if @current_player.position % 4 == 0
       @card = @game.draw_card(@current_player)
+      @card = Card.new(name: "encounter", value: 2)
       if @card.name == "encounter"
         session[:encounter_value] = @card.value
         ActionCable.server.broadcast(
@@ -79,6 +82,64 @@ class GamesController < ApplicationController
     end
   end
 
+  def select_trading_partner
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        game: render(partial: "select_trading_partner", locals: {
+          game: @game,
+          current_player: @current_player
+        }),
+        trading_cards: true
+      }
+    )
+  end
+
+  def select_cards_to_trade
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        game: render(partial: "trade_cards", locals: {
+          game: @game,
+          current_player: @current_player,
+          trading_partner: params[:trading_partner]
+        }),
+        trading_cards: true,
+        trading_partner: params[:trading_partner]
+      }
+    )
+  end
+
+  def do_trade_cards
+    traded_player = @game.players.find_by(name: params[:trading_partner])
+    card_value = params[:chosen_value].to_i
+    if params[:chosen_card] == "resource"
+      @current_player.resources.find{ |r| r.value == card_value }.destroy
+      traded_player.resources.create(value: card_value)
+      card = Card.new(name: "resource", value: card_value)
+    elsif params[:chosen_card] == "ally"
+      @current_player.allies.find{ |r| r.value == card_value }.destroy
+      traded_player.allies.create(value: card_value)
+      card = Card.new(name: "ally", value: card_value)
+    elsif params[:chosen_card] == "distraction"
+      @current_player.distractions.find{ |r| r.value == card_value }.destroy
+      traded_player.distractions.create(value: card_value)
+      card = Card.new(name: "distraction", value: card_value)
+    end
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        game: render(
+          partial: "traded_cards", locals: {
+            traded_player: traded_player.name,
+            traded_card: card
+          }
+        ),
+        traded_cards: true
+      }
+    )
+  end
+
   def choose_card
     ActionCable.server.broadcast(
       "game_channel",
@@ -93,6 +154,19 @@ class GamesController < ApplicationController
         encounter_in_progress: true,
         step: "choose_card",
         encounter_value: session[:encounter_value],
+      }
+    )
+  end
+
+  def cancel_trade_cards
+    @card = Card.new
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        game: render_game,
+        trade_cards_complete: true,
+        can_draw_card: true,
+        can_trade_card: true
       }
     )
   end
@@ -223,7 +297,7 @@ class GamesController < ApplicationController
             partial: "outcome",
             locals: {
               outcome: params[:outcome],
-              resources_lost: resources_lost[:remove].sum,
+              resources_lost: resources_lost && resources_lost[:remove].sum,
               ally: lost_card && lost_card['name'] == "ally"
             }
           ),
@@ -256,6 +330,7 @@ class GamesController < ApplicationController
       @game.next_round
     end
     @current_player = @players.any? && @players[@game.turn]
+    can_trade_cards = @game.players.active.where(position: @current_player.position).count > 1
     if @game.players.where(has_entered_sewers: true).count == @game.players.count
       ActionCable.server.broadcast(
         "game_channel",
@@ -270,7 +345,8 @@ class GamesController < ApplicationController
         "game_channel",
         {
           game: render_game,
-          next_turn: true
+          next_turn: true,
+          can_trade_cards: can_trade_cards
         }
       )
     end

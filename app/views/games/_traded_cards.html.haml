@@ -1,0 +1,9 @@
+- article = traded_card.name == "resource" ? "a" : "an"
+%p
+  = "#{@current_player.name} shared #{article} #{traded_card.name} with #{traded_player}"
+
+#drawn-card-image{style: "height: 340px; width: 505px; background-image: url(/assets/cards/#{traded_card.card_image}); background-position: top center;" }
+
+.encounter-button-container
+  .btn#end-trade-button
+    Continue

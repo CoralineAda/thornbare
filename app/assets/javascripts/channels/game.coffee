@@ -15,10 +15,34 @@ App.game = App.cable.subscriptions.create "GameChannel",
       if data.round > 2
         enableEnterSewers()
 
+    if data.can_draw_card?
+      enableTradeCards()
+
+    if data.can_trade_card?
+      enableDrawACard()
+
     if data.end_game?
       $('#the-end').html(data.game)
       $('#the-end').removeClass('n-d')
       $('#the-end').addClass('appear')
+
+    if data.trading_cards?
+      $("#trade-cards").html(data.game)
+      $('#trade-cards').removeClass('n-d')
+      $('#trade-cards').addClass('appear')
+      if data.trading_partner?
+        showSelectTradingCard(data.trading_partner)
+      else
+        showSelectTradingParner()
+
+    if data.traded_cards?
+      $("#trade-cards").html(data.game)
+      $('#trade-cards').removeClass('n-d')
+      $('#trade-cards').addClass('appear')
+      showTradedCards()
+
+    if data.trade_cards_complete?
+      $('#trade-cards').addClass('n-d')
 
     if data.reset?
       $('#game').html(data.game)
@@ -27,6 +51,9 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
     if data.end_encounter?
       $('#game').html(data.game)
+
+    if data.can_trade_cards == true
+      enableTradeCards()
 
     if data.move_result?
       disableRollToMove()
@@ -54,6 +81,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
         $('#cards').html = data.encounter
         chooseCards()
       if data.step == "show_ally_or_distraction"
+        $('#cards').addClass('n-d')
         $('#encounter').html(data.encounter)
         $('#encounter').removeClass('n-d')
         $('#encounter').addClass('appear')
@@ -90,11 +118,19 @@ App.game = App.cable.subscriptions.create "GameChannel",
         return
       return
 
+  enableTradeCards = () ->
+    $('#trade-button').removeClass('disabled')
+    $('#trade-button').click ->
+      $.post 'select_trading_partner', {}, (data, status) ->
+        return
+      return
+
   enableRollToMove = () ->
     if thisPlayerIsCurrentPlayer() == true == true
       $('#roll-to-move-button').removeClass('disabled')
       $('#roll-to-move-button').click ->
         $('#roll-to-move-button').off('click')
+        $('#roll-to-move-button').addClass('disabled')
         $.post 'roll_to_move', {}, (data, status) ->
           return
         return
@@ -147,6 +183,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
     if thisPlayerIsCurrentPlayer() == true
       $('#end-turn-button').removeClass('disabled')
       $('#end-turn-button').click ->
+        $('#end-turn-button').addClass('disabled')
         $.post 'end_turn', {}, (data, status) ->
           return
         return
@@ -163,16 +200,18 @@ App.game = App.cable.subscriptions.create "GameChannel",
       left: new_position.left + Math.floor(Math.random() * 50),
       top: new_position.top + Math.floor(Math.random() * 50)
     }, 1000, ->
-      if to_position >= 32
-        alert("You picked up an additional resource from The Bottoms.")
       $('#dice-result-container').removeClass('appear')
       $('#building').css("background-image", "url(/assets/buildings/building_" + (to_position % 32) + ".jpg)")
       $('#card-button').removeClass('disabled')
       disableRollToMove()
       enableDrawACard()
+      if thisPlayerIsCurrentPlayer() == true
+        if from_position + result >= 32
+          alert("You picked up an additional resource from The Bottoms.")
       return
 
   showCard = (card, cardType) ->
+    $('#drawn-card').removeClass('n-d')
     $('#drawn-card').addClass('appear')
     $('#drawn-card').css("background-image", "url(/assets/cards/" + card + ".png)")
     disableDrawACard()
@@ -182,6 +221,56 @@ App.game = App.cable.subscriptions.create "GameChannel",
       $('#drawn-card').removeClass 'appear'
       return
     ), 4000
+
+  showSelectTradingParner = () ->
+    $('#trade_cards').removeClass('n-d')
+    $('#trade_cards').addClass('appear')
+    if thisPlayerIsCurrentPlayer() == true
+      $("#trade-select-player-button").click ->
+        $.post 'select_cards_to_trade', {
+          trading_partner: $('#trade_player option:selected').text()
+        }, (data, status) ->
+          return
+        return
+      $("#select-player-to-trade-cancel-button").click ->
+        $.post 'cancel_trade_cards', {}, (data, status) ->
+          return
+        return
+    else
+      $("#trade-select-player-button").addClass("disabled")
+      $("#select-player-to-trade-cancel-button").addClass("disabled")
+
+  showSelectTradingCard = (trading_partner) ->
+    $('#trade_cards').removeClass('n-d')
+    $('#trade_cards').addClass('appear')
+    if thisPlayerIsCurrentPlayer() == true
+      $('.card').click ->
+        $('.card').removeClass('selected')
+        $(this).addClass('selected')
+      $("#give-card-button").click ->
+        $.post 'do_trade_cards', {
+          trading_partner: trading_partner,
+          chosen_card: $('.card.selected').data('name'),
+          chosen_value: $('.card.selected').data('value')
+        }, (data, status) ->
+          return
+        return
+      $("#trade-cancel-button").click ->
+        $.post 'cancel_trade_cards', {}, (data, status) ->
+          return
+        return
+    else
+      $("#give-card-button").addClass("disabled")
+      $("#trade-cancel-button").addClass("disabled")
+
+  showTradedCards = () ->
+    if thisPlayerIsCurrentPlayer() == true
+      $('#end-trade-button').click ->
+        $.post 'cancel_trade_cards', {}, (data, status) ->
+          return
+        return
+    else
+      $('#end-trade-button').addClass('disabled')
 
   showEncounter = (card, difficulty) ->
     disableDrawACard()

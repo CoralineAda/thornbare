@@ -3,9 +3,9 @@
   #game_info
     = render partial: "game_info", locals: { game: @game, current_player: @current_player, current_space: @current_space, connected_player: @connected_player }
 
-  #dice-result-container.takeover.fadeIn
+  #dice-result-container.takeover.fadeIn.n-d
 
-  #drawn-card.takeover.fadeIn
+  #drawn-card.takeover.fadeIn.n-d
     = render partial: "drawn_card", locals: { card: @card }
 
   #board
@@ -15,11 +15,12 @@
     = render partial: "choose_card", locals: { current_player: @current_player, card: Card.new }
 
   #encounter.takeover.fadeIn.n-d
-    = render partial: "encounter", locals: { current_player: @current_player, card: @card }
+
+  #trade-cards.takeover.fadeIn.n-d
+
+  #the-end.takeover.fadeIn.n-d
 
   #players
     = render partial: "players", locals: { players: @players, current_player: @current_player }
-
-  #the-end.takeover.fadeIn.n-d
 
 #this-player{ data: { name: "#{@connected_player.name}"} }

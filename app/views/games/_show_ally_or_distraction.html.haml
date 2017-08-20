@@ -1,13 +1,14 @@
 #chosen-card-container
-  - if card_type == "ally"
-    A powerful ally comes to #{@current_player.name}'s aid in this struggle.
-    #ally-or-distraction-image{style: "background-image: url(/assets/cards/#{card.card_image})" }
-  - elsif card_type == "distraction"
-    #{@current_player.name} hopes that creating a diversion will help turn the tide.
-    #ally-or-distraction-image{style: "background-image: url(/assets/cards/#{card.card_image})" }
-  - else
-    #{@current_player.name} faces this challenge alone.
-    #ally-or-distraction-image{style: "background-image: url(/assets/alone.jpg" }
+  %p
+    - if card_type == "ally"
+      A powerful ally comes to #{@current_player.name}'s aid in this struggle.
+      #ally-or-distraction-image{style: "background-image: url(/assets/cards/#{card.card_image})" }
+    - elsif card_type == "distraction"
+      #{@current_player.name} hopes that creating a diversion will help turn the tide.
+      #ally-or-distraction-image{style: "background-image: url(/assets/cards/#{card.card_image})" }
+    - else
+      #{@current_player.name} faces this challenge alone.
+      #ally-or-distraction-image{style: "background-image: url(/assets/alone.jpg" }
 
 .encounter-button-container
   .btn#roll-dice

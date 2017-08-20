@@ -1,0 +1,8 @@
+%p Select a player to trade cards with:
+= select_tag(:trade_player, options_for_select(game.players.active.where(position: current_player.position).map(&:name) - [@current_player.name]))
+
+.encounter-button-container
+  .btn#trade-select-player-button
+    Select a Card
+  .btn#select-player-to-trade-cancel-button
+    Cancel

@@ -1,20 +1,22 @@
-- if current_player.allies.any?
-  - show_or = true
-  .card-column.mt-1
-    .mt-minus-1
-      Choose an ally:
-    - current_player.allies.sort_by(&:value).each_with_index do |card, i|
-      .card-container{ style: "top: #{60 * i}px" }
-        %img{ src: "/assets/cards/#{card.card}", class: "card", data: { name: "ally", value: card.value } }
+%p.small
+  Do you want assistance in this battle?
 
-- if current_player.distractions.any?
-  .card-column.mt-1
-    .mt-minus-1
-      - show_or ? "OR choose a distraction:" : "Choose a distraction:"
-    - current_player.distractions.sort_by(&:value).each_with_index do |card, i|
-      .card-container{ style: "top: #{60 * i}px" }
-        %img{ src: "/assets/cards/#{card.card}", data: { name: "distraction", value: card.value } }
+.card-column
+  - cards_histogram = current_player.allies.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}
+  - cards_histogram.sort{|a,b| a[0] <=> b[0]}.each_with_index do |tuple, i|
+    - card = Card.new(name: "ally", value: tuple[0])
+    .card{ style: "top: #{40 * i}px; left: 150px;", data: { name: "ally", value: card.value } }
+      %img{ src: "/assets/cards/#{card.card_image}" }
+      = "x #{tuple[1]}"
 
-.encounter-button-container
+.card-column
+  - cards_histogram = current_player.distractions.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}
+  - cards_histogram.sort{|a,b| a[0] <=> b[0]}.each_with_index do |tuple, i|
+    - card = Card.new(name: "distraction", value: tuple[0])
+    .card{ style: "top: #{40 * i}px; left: 150px;", data: { name: "distraction", value: card.value } }
+      %img{ src: "/assets/cards/#{card.card_image}" }
+      = "x #{tuple[1]}"
+
+.encounter-button-container.f-r
   .btn#continue-button
     Continue
