@@ -1,5 +1,7 @@
 class Game < ApplicationRecord
 
+  FINAL_ENCOUNTER_VALUE = 6
+
   before_create :set_name
 
   has_many :players, dependent: :destroy

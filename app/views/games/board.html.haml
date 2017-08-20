@@ -12,7 +12,7 @@
   #board
     = render partial: "board", locals: { current_player: @current_player, spaces: @spaces, players: @players }
 
-  #cards.takeover.fadeIn
+  #cards.takeover.fadeIn.n-d
     = render partial: "choose_card", locals: { current_player: @current_player, card: Card.new }
 
   #encounter.takeover.fadeIn.n-d
@@ -20,5 +20,7 @@
 
   #players
     = render partial: "players", locals: { players: @players, current_player: @current_player }
+
+  #the-end.takeover.fadeIn.n-d
 
 #this-player{ data: { name: "#{@connected_player.name}"} }

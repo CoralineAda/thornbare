@@ -57,6 +57,8 @@ class GamesController < ApplicationController
       @card = @game.draw_card(@current_player)
       if @card.name == "encounter"
         session[:encounter_value] = @card.value
+      if @card.name == "encounter"
+        session[:encounter_value] = @card.value
         ActionCable.server.broadcast(
           "game_channel",
           {
@@ -97,6 +99,22 @@ class GamesController < ApplicationController
     )
   end
 
+  def final_encounter
+    if @card = Card.new(name: "encounter", value: Game::FINAL_ENCOUNTER_VALUE)
+      session[:encounter_value] = @card.value
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          encounter: render_game,
+          card: "#{@card.name}_#{@card.value}",
+          card_type: @card.name,
+          value: @card.value,
+          next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_rolls"
+        }
+      )
+    end
+  end
+
   def show_ally_or_distraction
     session[:ally_or_distraction] = { name: params[:chosen_card], value: params[:chosen_value] }
     ActionCable.server.broadcast(
@@ -135,6 +153,7 @@ class GamesController < ApplicationController
     else
       outcome = "failure"
     end
+    session[:outcome] = outcome
     ActionCable.server.broadcast(
       "game_channel",
       {
@@ -153,42 +172,74 @@ class GamesController < ApplicationController
   end
 
   def show_outcome
-    resources_lost = Resource.lose(@current_player.resources.map(&:value), session[:encounter_value])
-    resources_lost[:remove].each do |value|
-      @current_player.resources.find{|r| r.value == value}.destroy
-    end
-    resources_lost[:change].each do |value|
-      @current_player.resources.create(value: value)
-    end
+    if session[:outcome] == "failure"
+      resources_lost = Resource.lose(@current_player.resources.map(&:value), session[:encounter_value])
+      resources_lost[:remove].each do |value|
+        @current_player.resources.find{|r| r.value == value}.destroy
+      end
+      resources_lost[:change].each do |value|
+        @current_player.resources.create(value: value)
+      end
 
-    if lost_card = session[:ally_or_distraction]
-      if lost_card['name'] == "ally" && params[:outcome] == "failure"
-        @current_player.allies.find{ |ally| ally.value == lost_card['value'].to_i }.destroy
-      elsif lost_card['name'] == "distraction"
-        @current_player.distractions.find{ |distraction| distraction.value == lost_card['value'].to_i }.destroy
+      if lost_card = session[:ally_or_distraction]
+        if lost_card['name'] == "ally" && params[:outcome] == "failure"
+          @current_player.allies.find{ |ally| ally.value == lost_card['value'].to_i }.destroy
+        elsif lost_card['name'] == "distraction"
+          @current_player.distractions.find{ |distraction| distraction.value == lost_card['value'].to_i }.destroy
+        end
       end
     end
 
+    if session[:encounter_value] == Game::FINAL_ENCOUNTER_VALUE
+      if session[:outcome] == "success" || session[:outcome] == "draw"
+        @current_player.update_attributes(has_entered_sewers: true, success: true)
+        ActionCable.server.broadcast(
+          "game_channel",
+          {
+            encounter: render(
+              partial: "victory",
+              locals: { resource_value: @current_player.resources.map(&:value).sum }
+            ),
+            encounter_in_progress: true,
+            step: "show_outcome",
+          }
+        )
+      else
+        @current_player.update_attributes(has_entered_sewers: true, success: false)
+        ActionCable.server.broadcast(
+          "game_channel",
+          {
+            encounter: render(
+              partial: "failure",
+              locals: {}
+            ),
+            encounter_in_progress: true,
+            step: "show_outcome"
+          }
+        )
+      end
+    else
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          encounter: render(
+            partial: "outcome",
+            locals: {
+              outcome: params[:outcome],
+              resources_lost: resources_lost[:remove].sum,
+              ally: lost_card && lost_card['name'] == "ally"
+            }
+          ),
+          encounter_in_progress: true,
+          step: "show_outcome"
+        }
+      )
+    end
     session[:player_result] = nil
     session[:opponent_result] = nil
     session[:encounter_value] = nil
     session[:ally_or_distraction] = nil
-
-    ActionCable.server.broadcast(
-      "game_channel",
-      {
-        encounter: render(
-          partial: "outcome",
-          locals: {
-            outcome: params[:outcome],
-            resources_lost: resources_lost[:remove].sum,
-            ally: lost_card && lost_card['name'] == "ally"
-          }
-        ),
-        encounter_in_progress: true,
-        step: "show_outcome"
-      }
-    )
+    session[:outcome] = nil
   end
 
   def end_encounter
@@ -208,14 +259,24 @@ class GamesController < ApplicationController
       @game.next_round
     end
     @current_player = @players.any? && @players[@game.turn]
-    @card = Card.new
-    ActionCable.server.broadcast(
-      "game_channel",
-      {
-        game: render_game,
-        next_turn: true
-      }
-    )
+    if @game.players.where(has_entered_sewers: true).count == @game.players.count
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          game: render(partial: "the_end", locals: { game: @game }),
+          end_game: true
+        }
+      )
+    else
+      @card = Card.new
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          game: render_game,
+          next_turn: true
+        }
+      )
+    end
   end
 
   private

@@ -3,7 +3,7 @@
 body {
   padding: 1em;
   font-family: 'IM Fell English SC', serif;
-  font-size: 20px;
+  font-size: 18px;
   background-image: url(/assets/background.jpg);
   background-position: left top;
   background-repeat: no-repeat;
@@ -45,6 +45,14 @@ fieldset {
 
 .title h1 {
   margin: 0px;
+}
+
+.center {
+  text-align: center;
+}
+
+.x-large {
+  font-size: 2em;
 }
 
 .mt-1 {
@@ -205,7 +213,7 @@ fieldset {
 
 #cards {
   text-align: center;
-  z-index: 3000;
+  z-index: 11000;
 }
 
 .card-column {
@@ -277,7 +285,33 @@ fieldset {
   background-image: url(/assets/battle.jpg);
   background-size: 510px;
   background-repeat: no-repeat;
-  background-position: center center;
-  height: 450px;
+  background-position: bottom center;
+  height: 505px;
   width: 505px;
+}
+
+#the-end {
+  background-image: url(/assets/market_1.png);
+  background-size: 510px;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  height: 505px;
+  width: 505px;
+  z-index: 9000;
+}
+
+#the_end .failure {
+  background-image: url(/assets/failure.png);
+}
+
+#the_end .success {
+  background-image: url(/assets/market_2.png);
+}
+
+.final {
+  margin-top: 2em;
+}
+
+.final .result {
+  margin-top: 1em;
 }

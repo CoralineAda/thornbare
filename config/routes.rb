@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     post :show_rolls, to: :show_rolls
     post :show_outcome, to: :show_outcome
     post :end_encounter, to: :end_encounter
+    post :final_encounter, to: :final_encounter
+    post :the_end, to: :the_end
     resources :players
   end
 

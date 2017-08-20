@@ -4,7 +4,7 @@
 #board
   = render partial: "board", locals: { current_player: current_player, spaces: spaces, players: players }
 
-#cards.takeover.fadeIn
+#cards.takeover.fadeIn.n-d
 
 #dice-result-container.takeover.fadeIn
   = render partial: "dice_result", locals: { result: result }
@@ -14,6 +14,8 @@
 
 #encounter.takeover.fadeIn
   = render partial: "encounter", locals: { current_player: current_player, card: card }
+
+#the-end.takeover.fadeIn.n-d
 
 #players
   = render partial: "players", locals: { players: players, current_player: current_player }

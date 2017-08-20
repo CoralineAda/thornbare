@@ -12,6 +12,13 @@ App.game = App.cable.subscriptions.create "GameChannel",
       enableRollToMove()
       disableShowCards()
       enableShowCards()
+      if data.round > 2
+        enableEnterSewers()
+
+    if data.end_game?
+      $('#the-end').html(data.game)
+      $('#the-end').removeClass('n-d')
+      $('#the-end').addClass('appear')
 
     if data.reset?
       $('#game').html(data.game)
@@ -61,6 +68,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
         $('#encounter').removeClass('n-d')
         $('#encounter').addClass('appear')
         showOutcome()
+        enableEndTurn()
 
     if data.cards?
       $('#cards').html(data.cards)
@@ -75,6 +83,12 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
   currentPlayer = () ->
     return $('#current-player').data("name")
+
+  enableEnterSewers = () ->
+    $('sewers-button').click ->
+      $.post 'final_encounter', {}, (data, status) ->
+        return
+      return
 
   enableRollToMove = () ->
     if thisPlayerIsCurrentPlayer() == true == true
@@ -98,9 +112,11 @@ App.game = App.cable.subscriptions.create "GameChannel",
         return
 
   showCards = () ->
+    $('#cards').removeClass('n-d')
     $('#cards').addClass('appear')
     setTimeout (->
       $('#cards').removeClass 'appear'
+      $('#cards').addClass('n-d')
       return
     ), 5000
 
@@ -228,6 +244,14 @@ App.game = App.cable.subscriptions.create "GameChannel",
       $('#outcome-confirm-button').click ->
         enableEndTurn()
         $.post 'end_encounter', {}, (data, status) ->
+          return
+        return
+      $('#failure-confirm-button').click ->
+        $.post 'end_turn', {}, (data, status) ->
+          return
+        return
+      $('#victory-confirm-button').click ->
+        $.post 'end_turn', {}, (data, status) ->
           return
         return
 

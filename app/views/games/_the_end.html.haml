@@ -1,0 +1,14 @@
+.final
+  It was a long night filled with numerous victories and defeats. When your
+  party gathers to discuss the outcome of your efforts, you tally up your wins
+  and losses.
+
+  - game.players.each do |player|
+    .result
+      = "#{player.name} delivered #{pluralize(player.resources.map(&:value).sum, 'resource')}"
+
+  %p
+    Total resources brought to the Black Market:
+    %br
+    %span.x-large
+      = game.players.flat_map(&:resources).map(&:value).sum
