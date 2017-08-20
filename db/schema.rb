@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170820001543) do
+ActiveRecord::Schema.define(version: 20170820171302) do
 
   create_table "allies", force: :cascade do |t|
     t.integer "value"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 20170820001543) do
     t.integer "position", default: 0
     t.boolean "success", default: false
     t.boolean "has_entered_sewers", default: false
+    t.integer "times_around_the_board", default: 0
   end
 
   create_table "resources", force: :cascade do |t|

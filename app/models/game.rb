@@ -1,6 +1,7 @@
 class Game < ApplicationRecord
 
   FINAL_ENCOUNTER_VALUE = 6
+  MINIMUM_TRIPS_TO_ENABLE_ENDGAME = 2
 
   before_create :set_name
 

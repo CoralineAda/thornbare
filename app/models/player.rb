@@ -22,6 +22,12 @@ class Player < ApplicationRecord
 
   after_create :set_initial_resources
 
+  scope :successful, -> { where(success: true) }
+
+  def can_enter_sewers?
+    self.times_around_the_board >= Game::MINIMUM_TRIPS_TO_ENABLE_ENDGAME
+  end
+
   def color_value
     COLORS[self.color.to_sym]
   end

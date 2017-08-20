@@ -26,11 +26,11 @@ class GamesController < ApplicationController
   def roll_to_move
     result = rand(5) + 1
     original_position = @current_player.position
-    passed_go = @current_player.position + result >= 32
-    if passed_go
+    if @current_player.position + result >= 32
       @current_player.resources.create(value: @game.card_value)
+      @current_player.update_attribute(times_around_the_board: @current_player.times_around_the_board += 1)
     end
-    @current_player.update_attributes!(position: (@current_player.position + result) % 32)
+    @current_player.update_attributes(position: (@current_player.position + result) % 32)
     @current_space = Space.find_by(position: @current_player.position)
     ActionCable.server.broadcast(
       "game_channel",
@@ -55,8 +55,6 @@ class GamesController < ApplicationController
   def draw_card
     if @current_player.position % 4 == 0
       @card = @game.draw_card(@current_player)
-      if @card.name == "encounter"
-        session[:encounter_value] = @card.value
       if @card.name == "encounter"
         session[:encounter_value] = @card.value
         ActionCable.server.broadcast(
@@ -100,19 +98,18 @@ class GamesController < ApplicationController
   end
 
   def final_encounter
-    if @card = Card.new(name: "encounter", value: Game::FINAL_ENCOUNTER_VALUE)
-      session[:encounter_value] = @card.value
-      ActionCable.server.broadcast(
-        "game_channel",
-        {
-          encounter: render_game,
-          card: "#{@card.name}_#{@card.value}",
-          card_type: @card.name,
-          value: @card.value,
-          next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_rolls"
-        }
-      )
-    end
+    @card = Card.new(name: "encounter", value: Game::FINAL_ENCOUNTER_VALUE)
+    session[:encounter_value] = @card.value
+    ActionCable.server.broadcast(
+      "game_channel",
+      {
+        encounter: render_game,
+        card: "#{@card.name}_#{@card.value}",
+        card_type: @card.name,
+        value: @card.value,
+        next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_ally_or_distraction"
+      }
+    )
   end
 
   def show_ally_or_distraction

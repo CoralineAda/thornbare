@@ -5,10 +5,13 @@
 
   - game.players.each do |player|
     .result
-      = "#{player.name} delivered #{pluralize(player.resources.map(&:value).sum, 'resource')}"
+      - if player.success
+        = "#{player.name} delivered #{pluralize(player.resources.map(&:value).sum, 'resource')}."
+      - else
+        = "#{player.name} was thwarted by the city's guards}."
 
   %p
     Total resources brought to the Black Market:
     %br
     %span.x-large
-      = game.players.flat_map(&:resources).map(&:value).sum
+      = game.players.successful.flat_map(&:resources).map(&:value).sum

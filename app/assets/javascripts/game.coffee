@@ -20,5 +20,11 @@ $(document).ready ->
           return
         return
 
+  $('#sewers-button').click ->
+    if !$(this).hasClass("disabled")
+      $.post 'final_encounter', {}, (data, status) ->
+        return
+    return
+
   enableRollToMove()
   enableShowCards()

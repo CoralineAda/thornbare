@@ -163,6 +163,8 @@ App.game = App.cable.subscriptions.create "GameChannel",
       left: new_position.left + Math.floor(Math.random() * 50),
       top: new_position.top + Math.floor(Math.random() * 50)
     }, 1000, ->
+      if to_position >= 32
+        alert("You picked up an additional resource from The Bottoms.")
       $('#dice-result-container').removeClass('appear')
       $('#building').css("background-image", "url(/assets/buildings/building_" + (to_position % 32) + ".jpg)")
       $('#card-button').removeClass('disabled')
@@ -262,3 +264,8 @@ App.game = App.cable.subscriptions.create "GameChannel",
       result += Math.floor(Math.random() * 6) + 1
       i++
     return result
+
+  $('sewers-button').click ->
+    $.post 'final_encounter', {}, (data, status) ->
+      return
+    return
