@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
   root "games#index"
 
+  get :rules, controller: :rules, to: :rules
+
   resources :games do
     get :start, to: :play
     post :roll_to_move, to: :roll_to_move

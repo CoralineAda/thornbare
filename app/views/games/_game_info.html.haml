@@ -1,21 +1,20 @@
-%h2
-  The Black Market
 %h3
   Round #{game.round + 1}
   %br
   #{current_player.name}'s Turn
   %br
   = current_space.name
-  .btn#roll-to-move-button.disabled
-    Roll to Move
-  .btn#draw-a-card-button.disabled
-    Draw a Card
-  - players_on_square = game.players.select{|player| player != current_player && player.position == current_player.position}
-  .btn#show-cards-button.disabled
-    Your Cards
-  .btn#trade-button.disabled
-    Trade cards
-  .btn#sewers-button.disabled
-    Enter the Sewers
-  .btn#end-turn-button.disabled
-    End Turn
+  .mt-2
+    .btn#roll-to-move-button.disabled
+      Roll to Move
+    .btn#draw-a-card-button.disabled
+      Draw a Card
+    - players_on_square = game.players.select{|player| player != current_player && player.position == current_player.position}
+    .btn#show-cards-button.disabled
+      Your Cards
+    .btn#trade-button.disabled
+      Trade cards
+    .btn#sewers-button.disabled
+      Enter the Sewers
+    .btn#end-turn-button.disabled
+      End Turn

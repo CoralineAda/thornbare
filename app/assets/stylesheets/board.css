@@ -7,6 +7,7 @@ body {
   background-image: url(/assets/background.jpg);
   background-position: left top;
   background-repeat: no-repeat;
+  min-width: 1200px;
 }
 
 a:link, a:visited {
@@ -25,8 +26,10 @@ input[type='submit'] {
 .btn {
   background-color: #444;
   border-radius: 10px;
+  width: 200px;
+  font-size: .9em;
   color: #fff;
-  padding: 5px;
+  padding: 2px;
   cursor: pointer;
   text-align: center;
   margin-bottom: 1em;
@@ -51,6 +54,14 @@ fieldset {
   margin: 0px;
 }
 
+h1 {
+  margin-bottom: 0em;
+}
+
+h2 {
+  margin-top: 0em;
+}
+
 .center {
   text-align: center;
 }
@@ -61,6 +72,10 @@ fieldset {
 
 .mt-1 {
   margin-top: 1em;
+}
+
+.mt-2 {
+  margin-top: 2em;
 }
 
 .mt-minus-1 {
@@ -202,8 +217,10 @@ fieldset {
 }
 
 #players {
-  float: right;
+  float: left;
   width: 200px;
+  margin-left: 750px;
+  color: #fff;
 }
 
 .player-li {
