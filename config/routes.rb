@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root "games#index"
 
   get :rules, controller: :rules, to: :rules
+  get :background, controller: :rules, to: :background
 
   resources :games do
     get :start, to: :play

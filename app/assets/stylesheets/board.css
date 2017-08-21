@@ -42,8 +42,22 @@ input[type='submit'] {
   cursor: auto;
 }
 
+.f-l {
+  float: left;
+}
+
 .f-r {
   float: right;
+}
+
+.col-1 {
+  width: 25%;
+  padding: 1em;
+}
+
+.col-2 {
+  width: 50%;
+  padding: 1em;
 }
 
 fieldset {
@@ -356,4 +370,9 @@ h2 {
   overflow: hidden;
   height: 505px;
   width: 505px;
+}
+
+.hundkin img {
+  width: 300px;
+  margin-right: 2em;
 }
