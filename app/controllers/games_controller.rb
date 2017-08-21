@@ -329,7 +329,7 @@ class GamesController < ApplicationController
     if @game.turn == @players.count
       @game.next_round
     end
-    @current_player = @players.any? && @players[@game.turn]
+    @current_player = @players.any? && @players[@game.reload.turn]
     can_trade_cards = @game.players.active.where(position: @current_player.position).count > 1
     if @game.players.where(has_entered_sewers: true).count == @game.players.count
       ActionCable.server.broadcast(
