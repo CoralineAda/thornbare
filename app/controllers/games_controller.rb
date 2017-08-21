@@ -57,7 +57,6 @@ class GamesController < ApplicationController
   def draw_card
     if @current_player.position % 4 == 0
       @card = @game.draw_card(@current_player)
-      @card = Card.new(name: "encounter", value: 2)
       if @card.name == "encounter"
         session[:encounter_value] = @card.value
         ActionCable.server.broadcast(
@@ -246,7 +245,8 @@ class GamesController < ApplicationController
     if session[:outcome] == "failure"
       resources_lost = Resource.lose(@current_player.resources.map(&:value), session[:encounter_value])
       resources_lost[:remove].each do |value|
-        @current_player.resources.find{|r| r.value == value}.destroy
+        require 'pry'; binding.pry
+        @current_player.resources.find_by(value: value).destroy
       end
       resources_lost[:change].each do |value|
         @current_player.resources.create(value: value)

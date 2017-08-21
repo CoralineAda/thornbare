@@ -12,9 +12,12 @@
 
 ActiveRecord::Schema.define(version: 20170820171302) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "allies", force: :cascade do |t|
     t.integer "value"
-    t.integer "player_id"
+    t.bigint "player_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_allies_on_player_id"
@@ -22,7 +25,7 @@ ActiveRecord::Schema.define(version: 20170820171302) do
 
   create_table "distractions", force: :cascade do |t|
     t.integer "value"
-    t.integer "player_id"
+    t.bigint "player_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_distractions_on_player_id"
@@ -33,13 +36,6 @@ ActiveRecord::Schema.define(version: 20170820171302) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "game_id"
-  end
-
-  create_table "game_player", force: :cascade do |t|
-    t.integer "game_id"
-    t.integer "player_id"
-    t.index ["game_id"], name: "index_game_player_on_game_id"
-    t.index ["player_id"], name: "index_game_player_on_player_id"
   end
 
   create_table "games", force: :cascade do |t|
@@ -64,7 +60,7 @@ ActiveRecord::Schema.define(version: 20170820171302) do
 
   create_table "resources", force: :cascade do |t|
     t.integer "value"
-    t.integer "player_id"
+    t.bigint "player_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_resources_on_player_id"
