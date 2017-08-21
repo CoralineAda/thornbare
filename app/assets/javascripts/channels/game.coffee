@@ -148,13 +148,14 @@ App.game = App.cable.subscriptions.create "GameChannel",
         return
 
   showCards = () ->
-    $('#cards').removeClass('n-d')
-    $('#cards').addClass('appear')
-    setTimeout (->
-      $('#cards').removeClass 'appear'
-      $('#cards').addClass('n-d')
-      return
-    ), 5000
+    if thisPlayerIsCurrentPlayer() == true
+      $('#cards').removeClass('n-d')
+      $('#cards').addClass('appear')
+      setTimeout (->
+        $('#cards').removeClass 'appear'
+        $('#cards').addClass('n-d')
+        return
+      ), 5000
 
   disableShowCards = () ->
     $('#show-cards-button').off('click')
