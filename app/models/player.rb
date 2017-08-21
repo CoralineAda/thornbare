@@ -24,6 +24,7 @@ class Player < ApplicationRecord
 
   scope :successful, -> { where(success: true) }
   scope :active, -> { where(has_entered_sewers: false) }
+  default_scope { order(:created_at) }
 
   def can_enter_sewers?
     self.times_around_the_board >= Game::MINIMUM_TRIPS_TO_ENABLE_ENDGAME

@@ -9,6 +9,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
   received: (data) ->
     if data.next_turn?
       $('#game').html(data.game)
+      disableRollToMove()
       enableRollToMove()
       disableShowCards()
       enableShowCards()
@@ -126,7 +127,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
       return
 
   enableRollToMove = () ->
-    if thisPlayerIsCurrentPlayer() == true == true
+    if thisPlayerIsCurrentPlayer() == true
       $('#roll-to-move-button').removeClass('disabled')
       $('#roll-to-move-button').click ->
         $('#roll-to-move-button').off('click')

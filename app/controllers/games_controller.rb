@@ -18,7 +18,7 @@ class GamesController < ApplicationController
   end
 
   def start
-    @this_player = current_player
+    @this_player = @game.players[@game.turn]
     @card = Card.new(name: "encounter", value: 3)
     render :board
   end
