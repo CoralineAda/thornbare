@@ -60,6 +60,10 @@ input[type='submit'] {
   padding: 1em;
 }
 
+li {
+  margin-bottom: 1.25em;
+}
+
 fieldset {
   border: none;
 }
