@@ -15,6 +15,7 @@ class GamesController < ApplicationController
   end
 
   def show
+    @current_player = current_player
   end
 
   def start
@@ -245,7 +246,6 @@ class GamesController < ApplicationController
     if session[:outcome] == "failure"
       resources_lost = Resource.lose(@current_player.resources.map(&:value), session[:encounter_value])
       resources_lost[:remove].each do |value|
-        require 'pry'; binding.pry
         @current_player.resources.find_by(value: value).destroy
       end
       resources_lost[:change].each do |value|

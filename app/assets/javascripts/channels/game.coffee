@@ -79,6 +79,8 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
     if data.encounter_in_progress
       if data.step == "choose_card"
+        $('#cards').removeClass('n-d')
+        $('#cards').addClass('appear')
         $('#cards').html = data.encounter
         chooseCards()
       if data.step == "show_ally_or_distraction"
