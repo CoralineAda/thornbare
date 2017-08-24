@@ -22,18 +22,23 @@ class Game < ApplicationRecord
     colors - player_colors
   end
 
+  def draw_resource(player)
+    drawn_card = Card.new(name: "resource", value: card_value)
+    player.resources.create(value: drawn_card.value)
+  end
+
   def draw_card(player)
-    case rand(5)
+    case rand(7)
     when 0..1
       drawn_card = Card.new(name: "resource", value: card_value)
       player.resources.create(value: drawn_card.value)
-    when 2
+    when 2..3
       drawn_card = Card.new(name: "ally", value: card_value)
       player.allies.create(value: drawn_card.value)
-    when 3
+    when 4..5
       drawn_card = Card.new(name: "distraction", value: card_value)
       player.distractions.create(value: drawn_card.value)
-    when 4
+    when 6
       drawn_card = Card.new(name: "encounter", value: card_value)
       encounters.create(value: drawn_card.value)
     end

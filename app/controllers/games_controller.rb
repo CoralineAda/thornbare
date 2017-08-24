@@ -57,28 +57,30 @@ class GamesController < ApplicationController
 
   def draw_card
     if @current_player.position % 4 == 0
+      @card = @game.draw_resource(@current_player)
+    else
       @card = @game.draw_card(@current_player)
-      if @card.name == "encounter"
-        session[:encounter_value] = @card.value
-        ActionCable.server.broadcast(
-          "game_channel",
-          {
-            encounter: render_game,
-            card: "#{@card.name}_#{@card.value}",
-            card_type: @card.name,
-            value: @card.value,
-            next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_rolls"
-          }
-        )
-      else
-        ActionCable.server.broadcast(
-          "game_channel",
-          {
-            game: render_game,
-            card: "#{@card.name}_#{@card.value}"
-          }
-        )
-      end
+    end
+    if @card.name == "encounter"
+      session[:encounter_value] = @card.value
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          encounter: render_game,
+          card: "#{@card.name}_#{@card.value}",
+          card_type: @card.name,
+          value: @card.value,
+          next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_rolls"
+        }
+      )
+    else
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          game: render_game,
+          card: "#{@card.name}_#{@card.value}"
+        }
+      )
     end
   end
 
