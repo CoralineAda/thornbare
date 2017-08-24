@@ -8,7 +8,7 @@
       - if player.success
         = "#{player.name} delivered #{pluralize(player.resources.map(&:value).sum, 'resource')}."
       - else
-        = "#{player.name} was thwarted by the city's guards}."
+        = "#{player.name} was thwarted by the city's guards."
 
   %p
     Total resources brought to the Night Market:

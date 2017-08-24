@@ -13,8 +13,9 @@ App.game = App.cable.subscriptions.create "GameChannel",
       enableRollToMove()
       disableShowCards()
       enableShowCards()
-      if data.round > 2
-        enableEnterSewers()
+
+    if data.round > 1
+      enableEnterSewers()
 
     if data.can_draw_card?
       enableTradeCards()
@@ -81,7 +82,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
       if data.step == "choose_card"
         $('#cards').removeClass('n-d')
         $('#cards').addClass('appear')
-        $('#cards').html = data.encounter
+        $('#cards').html(data.encounter)
         chooseCards()
       if data.step == "show_ally_or_distraction"
         $('#cards').addClass('n-d')
@@ -116,10 +117,12 @@ App.game = App.cable.subscriptions.create "GameChannel",
     return $('#current-player').data("name")
 
   enableEnterSewers = () ->
-    $('sewers-button').click ->
-      $.post 'final_encounter', {}, (data, status) ->
+    if thisPlayerIsCurrentPlayer() == true
+      $('#sewers-button').removeClass('disabled')
+      $('#sewers-button').click ->
+        $.post 'final_encounter', {}, (data, status) ->
+          return
         return
-      return
 
   enableTradeCards = () ->
     $('#trade-button').removeClass('disabled')
@@ -169,15 +172,12 @@ App.game = App.cable.subscriptions.create "GameChannel",
     $('#roll-to-move-button').addClass('disabled')
 
   enableDrawACard = () ->
-    if currentPosition() % 4 == 0
-      if thisPlayerIsCurrentPlayer() == true
-        $('#draw-a-card-button').removeClass('disabled')
-        $('#draw-a-card-button').click ->
-          $.post 'draw_card', {}, (data, status) ->
-            return
+    if thisPlayerIsCurrentPlayer() == true
+      $('#draw-a-card-button').removeClass('disabled')
+      $('#draw-a-card-button').click ->
+        $.post 'draw_card', {}, (data, status) ->
           return
-    else
-      enableEndTurn()
+        return
 
   disableDrawACard = () ->
     $('#draw-a-card-button').off('click')

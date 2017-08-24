@@ -25,20 +25,21 @@ class Game < ApplicationRecord
   def draw_resource(player)
     drawn_card = Card.new(name: "resource", value: card_value)
     player.resources.create(value: drawn_card.value)
+    drawn_card
   end
 
   def draw_card(player)
-    case rand(7)
-    when 0..1
+    case rand(9)
+    when 0..2
       drawn_card = Card.new(name: "resource", value: card_value)
       player.resources.create(value: drawn_card.value)
-    when 2..3
+    when 3..4
       drawn_card = Card.new(name: "ally", value: card_value)
       player.allies.create(value: drawn_card.value)
-    when 4..5
+    when 5..6
       drawn_card = Card.new(name: "distraction", value: card_value)
       player.distractions.create(value: drawn_card.value)
-    when 6
+    when 7..8
       drawn_card = Card.new(name: "encounter", value: card_value)
       encounters.create(value: drawn_card.value)
     end

@@ -183,7 +183,7 @@ class GamesController < ApplicationController
         card: "#{@card.name}_#{@card.value}",
         card_type: @card.name,
         value: @card.value,
-        next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_ally_or_distraction"
+        next_step: @current_player.allies.any? || @current_player.distractions.any? ? "choose_card" : "show_rolls"
       }
     )
   end
@@ -348,6 +348,7 @@ class GamesController < ApplicationController
         {
           game: render_game,
           next_turn: true,
+          round: @game.round,
           can_trade_cards: can_trade_cards
         }
       )
