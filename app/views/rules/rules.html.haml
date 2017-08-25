@@ -12,8 +12,9 @@
     To move around the board, you roll a die. You may only move forward.
 
   %li
-    When you land on a named location, for example The Trifle, you draw a card.
-    The card may be a resource, an ally, a distraction, or an encounter.
+    When you land on a space you draw a card. The card may be a resource, an ally,
+    a distraction, or an encounter. Landing on a named space (e.g. The Trifle)
+    always nets you a resource.
 
   %li
     Each time you pass The Bottoms on the board, you gain a resource card.
@@ -45,13 +46,12 @@
     you played an ally card in the encounter and lose, that ally is discarded.
 
   %li
-    At any point after circling the board #{Game::MINIMUM_TRIPS_TO_ENABLE_ENDGAME}
-    times, you may on your turn opt to enter the sewers, which serve as the
-    entrance to the Night Market. This triggers the final encounter. If you
-    win the final encounter, congratulations! Your accumulated resources will
-    be put on the market and you will earn a reward from Tarantel. If you lose
-    the final encounter, none of your resources will make it to the Night Market
-    and you will be out of the game.
+    At any point after circling the board at least once, you may on your turn opt
+    to enter the Sewers, which serve as the entrance to the Night Market. This
+    triggers the final encounter. If you win the final encounter, congratulations!
+    Your accumulated resources will be put on the market and you will earn a reward
+    from Tarantel. If you lose the final encounter, none of your resources will
+    make it to the Night Market and you will be out of the game.
 
   %li
     The game is over when all players have attempted to enter the Night Market.
