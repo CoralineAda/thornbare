@@ -34,10 +34,11 @@ input[type='submit'] {
   text-align: center;
   margin-bottom: 1em;
   z-index: 10000;
+  box-shadow: 0px 0px 10px #fff;
 }
 
 .btn.disabled {
-  background-color: #aaa;
+  background-color: #aaa !important;
   color: #ddd;
   cursor: auto;
 }
@@ -167,8 +168,8 @@ h2 {
 }
 
 .takeover p {
-  font-size: 2em;
-  margin-top: 1em;
+  font-size: 1.25em;
+  margin: 0px;
 }
 
 .takeover p.small {
@@ -265,6 +266,7 @@ h2 {
   margin-right: 15px;
   margin-left: 30px;
   float: left;
+  position: relative;
 }
 
 .card-container {
@@ -272,6 +274,7 @@ h2 {
 
 }
 .card {
+  position: absolute;
   width: 125px;
 }
 
@@ -309,9 +312,13 @@ h2 {
 .encounter-button-container {
   position: absolute;
   bottom: 10px;
-  right: 200px;
+  right: 150px;
   width: 200px;
   z-index: 6000;
+}
+
+.encounter-button-container .btn {
+  background-color: #aa0000;
 }
 
 .encounter-button-container.f-r {
@@ -339,7 +346,7 @@ h2 {
   background-image: url(/assets/battle.jpg);
   background-size: 510px;
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: bottom center;
   height: 505px;
   width: 505px;
 }

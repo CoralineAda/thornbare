@@ -1,5 +1,5 @@
 %p.small
-  What card do you want to give?
+  Select a card to trade.
 
 .card-column
   - cards_histogram = @current_player.resources.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}

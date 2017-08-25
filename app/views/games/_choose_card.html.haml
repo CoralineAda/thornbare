@@ -1,11 +1,11 @@
 %p.small
-  Do you want assistance in this battle?
+  Choose an ally or distraction to assist in this battle (optional).
 
-.card-column
+.card-column.mt
   - cards_histogram = current_player.allies.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}
   - cards_histogram.sort{|a,b| a[0] <=> b[0]}.each_with_index do |tuple, i|
     - card = Card.new(name: "ally", value: tuple[0])
-    .card{ style: "top: #{40 * i}px; left: 150px;", data: { name: "ally", value: card.value } }
+    .card{ style: "top: #{100 * i}px; left: 0px;", data: { name: "ally", value: card.value } }
       %img{ src: "/assets/cards/#{card.card_image}" }
       = "x #{tuple[1]}"
 
@@ -13,7 +13,7 @@
   - cards_histogram = current_player.distractions.map(&:value).sort.inject({}){ |h, value| h[value] ||= 0; h[value] += 1; h}
   - cards_histogram.sort{|a,b| a[0] <=> b[0]}.each_with_index do |tuple, i|
     - card = Card.new(name: "distraction", value: tuple[0])
-    .card{ style: "top: #{40 * i}px; left: 150px;", data: { name: "distraction", value: card.value } }
+    .card{ style: "top: #{100 * i}px; left: 150px;", data: { name: "distraction", value: card.value } }
       %img{ src: "/assets/cards/#{card.card_image}" }
       = "x #{tuple[1]}"
 

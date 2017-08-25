@@ -1,17 +1,17 @@
 #outcome
-  %p
-    - if outcome == "draw"
+  - if outcome == "draw"
+    %p
       It's a draw! Both sides leave the fight, exhausted.
-    - if outcome == "success"
+  - if outcome == "success"
+    %p
       = "#{@current_player.name} has prevailed over the enemy!"
-    - if outcome == "failure"
-      %p
-        = "#{@current_player.name} fought bravely but was overcome..."
-        %br
-        - if ally
-          = "#{@current_player.name} has lost #{pluralize(resources_lost, "resource")} and a valuable ally."
-        - else
-          = "#{@current_player.name} has lost #{pluralize(resources_lost, "resource")}."
+  - if outcome == "failure"
+    %p
+      = "#{@current_player.name} fought bravely but was overcome..."
+      - if ally
+        = "#{@current_player.name} has lost #{pluralize(resources_lost, "resource")} and a valuable ally."
+      - else
+        = "#{@current_player.name} has lost #{pluralize(resources_lost, "resource")}."
 
   .encounter-button-container
     .btn#outcome-confirm-button

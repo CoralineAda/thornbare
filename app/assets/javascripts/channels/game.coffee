@@ -14,14 +14,11 @@ App.game = App.cable.subscriptions.create "GameChannel",
       disableShowCards()
       enableShowCards()
 
-    if data.round > 1
+    if data.can_enter_sewers == true
       enableEnterSewers()
 
     if data.can_draw_card?
       enableTradeCards()
-
-    if data.can_trade_card?
-      enableDrawACard()
 
     if data.end_game?
       $('#the-end').html(data.game)
@@ -59,11 +56,13 @@ App.game = App.cable.subscriptions.create "GameChannel",
 
     if data.move_result?
       disableRollToMove()
+      disableEnterSewers()
       $('#players').html(data.players)
       doMove(data.from_position, data.to_position, data.move_result)
 
     if data.card?
       if data.encounter?
+        disableEnterSewers()
         $('#game').html(data.game)
         showCard(data.card, data.card_type)
         setTimeout (->
@@ -79,6 +78,9 @@ App.game = App.cable.subscriptions.create "GameChannel",
         showCard(data.card, data.card_type)
 
     if data.encounter_in_progress
+      disableEnterSewers()
+      disableRollToMove()
+      disableShowCards()
       if data.step == "choose_card"
         $('#cards').removeClass('n-d')
         $('#cards').addClass('appear')
@@ -124,12 +126,21 @@ App.game = App.cable.subscriptions.create "GameChannel",
           return
         return
 
+  disableEnterSewers = () ->
+    $('#sewers-button').addClass('disabled')
+    $('#sewers-button').off('click')
+
   enableTradeCards = () ->
-    $('#trade-button').removeClass('disabled')
-    $('#trade-button').click ->
-      $.post 'select_trading_partner', {}, (data, status) ->
+    if thisPlayerIsCurrentPlayer() == true
+      $('#trade-button').removeClass('disabled')
+      $('#trade-button').click ->
+        $.post 'select_trading_partner', {}, (data, status) ->
+          return
         return
-      return
+
+  disableTradeCards = () ->
+    $('#trade-button').addClass('disabled')
+    $('#trade-button').off('click')
 
   enableRollToMove = () ->
     if thisPlayerIsCurrentPlayer() == true
@@ -193,6 +204,7 @@ App.game = App.cable.subscriptions.create "GameChannel",
         return
 
   doMove = (from_position, to_position, result) ->
+    disableTradeCards()
     $('#dice-result-container').addClass('appear')
     if thisPlayerIsCurrentPlayer() == true
       $('#dice-result-container').text("You rolled a " + result)
@@ -326,10 +338,13 @@ App.game = App.cable.subscriptions.create "GameChannel",
       $('#player-roll-container').removeClass('appear')
       return
     ), 2000
-    $('#show-result-button').click ->
-      $.post 'show_outcome', { outcome: outcome }, (data, status) ->
+    if thisPlayerIsCurrentPlayer() == true
+      $('#show-result-button').click ->
+        $.post 'show_outcome', { outcome: outcome }, (data, status) ->
+          return
         return
-      return
+    else
+      $('#show-result-button').addClass('disabled')
 
   showOutcome = () ->
     $('#encounter-outcome-container').removeClass('n-d')
@@ -349,6 +364,10 @@ App.game = App.cable.subscriptions.create "GameChannel",
         $.post 'end_turn', {}, (data, status) ->
           return
         return
+    else
+      $('#outcome-confirm-button').addClass('disabled')
+      $('#failure-confirm-button').addClass('disabled')
+      $('#victory-confirm-button').addClass('disabled')
 
   rollDice = (quantity) ->
     result = 0

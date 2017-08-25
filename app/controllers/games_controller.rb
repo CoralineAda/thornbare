@@ -316,17 +316,6 @@ class GamesController < ApplicationController
   end
 
   def end_encounter
-    @card = Card.new
-    ActionCable.server.broadcast(
-      "game_channel",
-      {
-        game: render_game,
-        reset: true
-      }
-    )
-  end
-
-  def end_turn
     @game.next_turn
     if @game.turn == @players.count
       @game.next_round
@@ -349,6 +338,37 @@ class GamesController < ApplicationController
           game: render_game,
           next_turn: true,
           round: @game.round,
+          can_enter_sewers: @current_player.can_enter_sewers?,
+          can_trade_cards: can_trade_cards
+        }
+      )
+    end
+  end
+
+  def end_turn
+    @game.next_turn
+    if @game.turn == @players.count
+      @game.next_round
+    end
+    @current_player = @players.active.any? && @players[@game.reload.turn]
+    can_trade_cards = @game.players.active.where(position: @current_player.position).count > 1
+    if @game.players.where(has_entered_sewers: true).count == @game.players.count
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          game: render(partial: "the_end", locals: { game: @game }),
+          end_game: true
+        }
+      )
+    else
+      @card = Card.new
+      ActionCable.server.broadcast(
+        "game_channel",
+        {
+          game: render_game,
+          next_turn: true,
+          round: @game.round,
+          can_enter_sewers: @current_player.can_enter_sewers?,
           can_trade_cards: can_trade_cards
         }
       )
@@ -363,7 +383,7 @@ class GamesController < ApplicationController
   end
 
   def scope_players
-    @players = @game.players
+    @players = @game.players.active
     @current_player = @players.any? && @players[@game.turn]
     @connected_player = current_player || Player.new
   end
