@@ -149,7 +149,7 @@ class GamesController < ApplicationController
         encounter: render(
           partial: "choose_card",
           locals: {
-            current_player: current_player,
+            current_player: @current_player,
             card: Card.new(name: "encounter", value: session[:encounter_value])
           }
         ),
@@ -256,7 +256,9 @@ class GamesController < ApplicationController
 
       if lost_card = session[:ally_or_distraction]
         if lost_card['name'] == "ally" && params[:outcome] == "failure"
-          @current_player.allies.find{ |ally| ally.value == lost_card['value'].to_i }.destroy
+          if ally_to_lose = @current_player.allies.find{ |ally| ally.value == lost_card['value'].to_i }
+            ally_to_lose.destroy
+          end
         elsif lost_card['name'] == "distraction"
           @current_player.distractions.find{ |distraction| distraction.value == lost_card['value'].to_i }.destroy
         end
