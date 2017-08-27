@@ -340,7 +340,7 @@ class GamesController < ApplicationController
           game: render_game,
           next_turn: true,
           round: @game.round,
-          can_enter_sewers: @current_player.can_enter_sewers?,
+          can_enter_sewers: true,
           can_trade_cards: can_trade_cards
         }
       )
