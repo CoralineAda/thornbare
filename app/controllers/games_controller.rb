@@ -386,7 +386,7 @@ class GamesController < ApplicationController
 
   def scope_players
     @players = @game.players.active
-    @current_player = @players.any? && @players[@game.turn]
+    @current_player = @players.any? && @players[@game.turn] || @game.players.active.first
     @connected_player = current_player || Player.new
   end
 
